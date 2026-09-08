@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SuiRu — Learn Languages</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0b0f19;
+    --bg-2:#0e1422;
+    --card:#161f32;
+    --card-soft:#131a2b;
+    --border:rgba(148,163,196,0.12);
+    --accent:#38bdf8;
+    --accent-2:#7dd3fc;
+    --green:#22c55e;
+    --red:#f43f5e;
+    --text:#e7ecf5;
+    --text-dim:#8a93ab;
+    --text-faint:#5b6478;
+    --radius-lg:20px;
+    --radius-md:14px;
+    --radius-sm:10px;
+    --sidebar-w:264px;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Plus Jakarta Sans', sans-serif;
+    background:
+      radial-gradient(circle at 15% 0%, rgba(56,189,248,0.10), transparent 40%),
+      radial-gradient(circle at 85% 100%, rgba(34,197,94,0.08), transparent 45%),
+      var(--bg);
+    color:var(--text);
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{ background:rgba(56,189,248,0.35); }
+  ::-webkit-scrollbar{ width:8px; height:8px; }
+  ::-webkit-scrollbar-track{ background:transparent; }
+  ::-webkit-scrollbar-thumb{ background:#25324a; border-radius:8px; }
+
+  button{ font-family:inherit; cursor:pointer; }
+  input{ font-family:inherit; }
+
+  /* ---------------- LAYOUT ---------------- */
+  #app{
+    display:none;
+    min-height:100vh;
+  }
+  #app.visible{ display:flex; }
+
+  .sidebar{
+    width:var(--sidebar-w);
+    flex-shrink:0;
+    position:fixed;
+    top:0; left:0; bottom:0;
+    background:linear-gradient(180deg, var(--bg-2), var(--bg));
+    border-right:1px solid var(--border);
+    display:flex;
+    flex-direction:column;
+    padding:26px 20px;
+    z-index:20;
+  }
+
+  .logo{
+    font-size:26px;
+    font-weight:800;
+    letter-spacing:-0.5px;
+    color:var(--text);
+    margin-bottom:34px;
+    padding-left:2px;
+  }
+  .logo span{
+    color:var(--accent);
+    text-shadow:0 0 12px rgba(56,189,248,0.85), 0 0 28px rgba(56,189,248,0.4);
+  }
+
+  .nav-label{
+    font-size:11.5px;
+    color:var(--text-faint);
+    margin:22px 4px 10px;
+    font-weight:600;
+    letter-spacing:0.3px;
+  }
+  .nav-label:first-of-type{ margin-top:0; }
+
+  .course-btn{
+    display:flex; align-items:center; gap:10px;
+    width:100%;
+    background:var(--card-soft);
+    border:1px solid var(--border);
+    color:var(--text-dim);
+    padding:12px 14px;
+    border-radius:var(--radius-md);
+    margin-bottom:8px;
+    text-align:left;
+    font-size:13.5px;
+    font-weight:600;
+    transition:border-color .18s ease, color .18s ease, background .18s ease, transform .12s ease;
+  }
+  .course-btn:hover{ transform:translateX(2px); border-color:rgba(56,189,248,0.35); color:var(--text); }
+  .course-btn.active{
+    color:var(--text);
+    border-color:var(--accent);
+    background:linear-gradient(135deg, rgba(56,189,248,0.14), rgba(56,189,248,0.03));
+    box-shadow:0 0 0 1px rgba(56,189,248,0.15), 0 8px 22px -10px rgba(56,189,248,0.5);
+  }
+  .flags{ font-size:16px; }
+
+  .level-row{ display:flex; flex-direction:column; gap:8px; }
+  .level-btn{
+    background:transparent;
+    border:1px solid var(--border);
+    color:var(--text-dim);
+    padding:10px 14px;
+    border-radius:var(--radius-sm);
+    font-size:13px;
+    font-weight:600;
+    text-align:left;
+    transition:all .18s ease;
+  }
+  .level-btn:hover{ border-color:rgba(148,163,196,0.3); color:var(--text); }
+  .level-btn.active{
+    color:#0b0f19;
+    background:var(--accent);
+    border-color:var(--accent);
+    box-shadow:0 8px 20px -8px rgba(56,189,248,0.7);
+  }
+
+  .admin-nav-btn{
+    display:flex; align-items:center; gap:10px;
+    background:var(--card-soft);
+    border:1px solid rgba(244,63,94,0.25);
+    color:#ffb4c2;
+    padding:12px 14px;
+    border-radius:var(--radius-md);
+    font-size:13.5px;
+    font-weight:700;
+    width:100%;
+    transition:all .18s ease;
+  }
+  .admin-nav-btn:hover{ background:rgba(244,63,94,0.1); }
+  .admin-nav-btn.active{
+    background:linear-gradient(135deg, rgba(244,63,94,0.22), rgba(244,63,94,0.04));
+    box-shadow:0 0 0 1px rgba(244,63,94,0.3);
+  }
+
+  .sidebar-spacer{ flex:1; }
+
+  .online-pill{
+    display:flex; align-items:center; gap:8px;
+    font-size:12px;
+    color:var(--text-dim);
+    padding:8px 4px 16px;
+  }
+  .dot{
+    width:8px; height:8px; border-radius:50%;
+    background:var(--green);
+    box-shadow:0 0 0 0 rgba(34,197,94,0.6);
+    animation:pulse-dot 1.8s infinite;
+    flex-shrink:0;
+  }
+  @keyframes pulse-dot{
+    0%{ box-shadow:0 0 0 0 rgba(34,197,94,0.55); }
+    70%{ box-shadow:0 0 0 7px rgba(34,197,94,0); }
+    100%{ box-shadow:0 0 0 0 rgba(34,197,94,0); }
+  }
+
+  .profile-widget{
+    display:flex; align-items:center; gap:12px;
+    background:var(--card-soft);
+    border:1px solid var(--border);
+    border-radius:var(--radius-md);
+    padding:12px;
+  }
+  .avatar{
+    width:38px; height:38px; border-radius:10px;
+    background:linear-gradient(135deg, var(--accent), #0ea5e9);
+    display:flex; align-items:center; justify-content:center;
+    font-weight:800; color:#04121c; font-size:15px;
+    flex-shrink:0;
+  }
+  .profile-meta{ overflow:hidden; flex:1; }
+  .profile-name{ font-size:13.5px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .profile-role{ font-size:11px; color:var(--text-faint); text-transform:capitalize; }
+  .signout-btn{
+    background:none; border:none; color:var(--text-faint);
+    font-size:17px; padding:4px; border-radius:8px; transition:color .15s;
+  }
+  .signout-btn:hover{ color:var(--red); }
+
+  /* ---------------- MAIN ---------------- */
+  .main{
+    margin-left:var(--sidebar-w);
+    flex:1;
+    padding:38px 44px 60px;
+    max-width:1100px;
+  }
+
+  .page-title{ font-size:26px; font-weight:800; margin:0 0 4px; }
+  .page-sub{ color:var(--text-dim); font-size:14.5px; margin:0 0 30px; }
+
+  .glass{
+    background:linear-gradient(160deg, var(--card), var(--card-soft));
+    border:1px solid var(--border);
+    border-radius:var(--radius-lg);
+  }
+
+  .grid-2{ display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+
+  .stat-card{ padding:20px 22px; }
+  .stat-num{ font-size:28px; font-weight:800; }
+  .stat-label{ color:var(--text-dim); font-size:12.5px; margin-top:2px; }
+
+  .start-card{
+    padding:30px;
+    margin-top:24px;
+    display:flex; align-items:center; justify-content:space-between; gap:24px;
+    flex-wrap:wrap;
+  }
+  .start-card h3{ margin:0 0 6px; font-size:19px; }
+  .start-card p{ margin:0; color:var(--text-dim); font-size:13.5px; max-width:420px; }
+
+  .btn-primary{
+    background:linear-gradient(135deg, var(--accent), #0ea5e9);
+    color:#04121c;
+    border:none;
+    padding:13px 26px;
+    border-radius:var(--radius-md);
+    font-weight:700;
+    font-size:14px;
+    box-shadow:0 10px 24px -10px rgba(56,189,248,0.7);
+    transition:transform .12s ease, box-shadow .12s ease;
+    white-space:nowrap;
+  }
+  .btn-primary:hover{ transform:translateY(-1px); box-shadow:0 14px 28px -10px rgba(56,189,248,0.85); }
+  .btn-primary:active{ transform:translateY(0); }
+
+  .btn-ghost{
+    background:transparent;
+    border:1px solid var(--border);
+    color:var(--text);
+    padding:10px 18px;
+    border-radius:var(--radius-sm);
+    font-weight:600;
+    font-size:13.5px;
+    transition:border-color .15s;
+  }
+  .btn-ghost:hover{ border-color:var(--accent); }
+
+  /* ---------------- QUIZ ---------------- */
+  .quiz-wrap{ max-width:680px; }
+
+  .progress-track{
+    width:100%; height:9px;
+    background:var(--card-soft);
+    border-radius:20px;
+    overflow:hidden;
+    border:1px solid var(--border);
+    margin-bottom:26px;
+  }
+  .progress-fill{
+    height:100%;
+    background:linear-gradient(90deg, var(--accent), var(--green));
+    border-radius:20px;
+    transition:width .45s cubic-bezier(.4,0,.2,1);
+  }
+
+  .question-card{ padding:34px 32px; }
+  .question-count{ font-size:12.5px; color:var(--text-dim); font-weight:600; margin-bottom:10px; }
+  .question-text{ font-size:23px; font-weight:700; margin:0 0 28px; line-height:1.4; }
+
+  .options-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .option-btn{
+    background:var(--card-soft);
+    border:1.5px solid var(--border);
+    color:var(--text);
+    padding:16px 18px;
+    border-radius:var(--radius-md);
+    font-size:14.5px;
+    font-weight:600;
+    text-align:left;
+    transition:border-color .15s ease, background .15s ease, transform .12s ease;
+  }
+  .option-btn:hover:not(:disabled){ border-color:var(--accent-2); transform:translateY(-1px); }
+  .option-btn:disabled{ cursor:default; }
+
+  .option-btn.correct{
+    border-color:var(--green);
+    background:rgba(34,197,94,0.14);
+    animation:pulse-correct .5s ease;
+  }
+  .option-btn.incorrect{
+    border-color:var(--red);
+    background:rgba(244,63,94,0.14);
+    animation:shake .45s ease;
+  }
+  @keyframes pulse-correct{
+    0%{ transform:scale(1); }
+    35%{ transform:scale(1.035); box-shadow:0 0 0 6px rgba(34,197,94,0.18); }
+    100%{ transform:scale(1); box-shadow:none; }
+  }
+  @keyframes shake{
+    0%,100%{ transform:translateX(0); }
+    20%{ transform:translateX(-8px); }
+    40%{ transform:translateX(7px); }
+    60%{ transform:translateX(-5px); }
+    80%{ transform:translateX(4px); }
+  }
+
+  .quiz-footer{ display:flex; justify-content:space-between; align-items:center; margin-top:22px; }
+  .quiz-score-live{ font-size:13px; color:var(--text-dim); font-weight:600; }
+
+  .results-card{ padding:44px 36px; text-align:center; }
+  .results-big{ font-size:56px; font-weight:800; margin:6px 0 4px;
+    background:linear-gradient(135deg, var(--accent), var(--green));
+    -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .results-sub{ color:var(--text-dim); font-size:14px; margin-bottom:26px; }
+
+  /* ---------------- ADMIN ---------------- */
+  .admin-table{ width:100%; border-collapse:collapse; }
+  .admin-table th{
+    text-align:left; font-size:11.5px; color:var(--text-faint);
+    font-weight:700; padding:0 14px 10px; border-bottom:1px solid var(--border);
+  }
+  .admin-table td{
+    padding:13px 14px; font-size:13.5px; border-bottom:1px solid var(--border);
+    vertical-align:middle;
+  }
+  .badge{
+    display:inline-block; padding:4px 10px; border-radius:20px;
+    font-size:11px; font-weight:700;
+  }
+  .badge.pending{ background:rgba(250,204,21,0.14); color:#facc15; }
+  .badge.approved{ background:rgba(34,197,94,0.14); color:var(--green); }
+  .badge.rejected{ background:rgba(244,63,94,0.14); color:var(--red); }
+  .badge.admin{ background:rgba(56,189,248,0.14); color:var(--accent); }
+
+  .row-actions{ display:flex; gap:8px; }
+  .icon-btn{
+    background:var(--card-soft); border:1px solid var(--border);
+    color:var(--text); padding:6px 12px; border-radius:8px; font-size:12px; font-weight:700;
+    transition:all .15s;
+  }
+  .icon-btn.approve:hover{ border-color:var(--green); color:var(--green); }
+  .icon-btn.reject:hover{ border-color:var(--red); color:var(--red); }
+  .icon-btn.pw:hover{ border-color:var(--accent); color:var(--accent); }
+
+  .online-list{ display:flex; flex-direction:column; gap:10px; margin-top:6px; }
+  .online-row{
+    display:flex; align-items:center; gap:10px;
+    background:var(--card-soft); border:1px solid var(--border);
+    padding:10px 14px; border-radius:var(--radius-sm); font-size:13px; font-weight:600;
+  }
+
+  .section{ display:none; animation:fadein .35s ease; }
+  .section.visible{ display:block; }
+  @keyframes fadein{ from{ opacity:0; transform:translateY(6px);} to{ opacity:1; transform:translateY(0);} }
+
+  .pending-screen{
+    max-width:480px; margin:80px auto; text-align:center; padding:40px 34px;
+  }
+  .pending-screen .icon{ font-size:38px; margin-bottom:14px; }
+
+  /* ---------------- AUTH MODAL ---------------- */
+  #auth-overlay{
+    position:fixed; inset:0; z-index:100;
+    background:rgba(5,8,15,0.72);
+    backdrop-filter:blur(6px);
+    display:flex; align-items:center; justify-content:center;
+  }
+  #auth-overlay.hidden{ display:none; }
+
+  .auth-card{
+    width:380px;
+    padding:38px 34px;
+    border-radius:var(--radius-lg);
+    background:linear-gradient(160deg, var(--card), var(--card-soft));
+    border:1px solid var(--border);
+    box-shadow:0 30px 80px -20px rgba(0,0,0,0.6);
+  }
+  .auth-logo{ font-size:24px; font-weight:800; margin-bottom:6px; }
+  .auth-logo span{ color:var(--accent); text-shadow:0 0 12px rgba(56,189,248,0.7); }
+  .auth-tag{ color:var(--text-dim); font-size:13px; margin-bottom:26px; }
+
+  .auth-tabs{ display:flex; gap:6px; background:var(--bg); padding:4px; border-radius:12px; margin-bottom:22px; }
+  .auth-tab{
+    flex:1; text-align:center; padding:9px 0; border-radius:9px; border:none;
+    background:transparent; color:var(--text-dim); font-weight:700; font-size:13px;
+    transition:all .15s;
+  }
+  .auth-tab.active{ background:var(--accent); color:#04121c; }
+
+  .field-label{ font-size:12px; color:var(--text-dim); font-weight:600; margin:14px 0 6px; display:block; }
+  .field-input{
+    width:100%; background:var(--bg); border:1.5px solid var(--border);
+    color:var(--text); padding:12px 14px; border-radius:var(--radius-sm); font-size:14px;
+    transition:border-color .15s;
+  }
+  .field-input:focus{ outline:none; border-color:var(--accent); }
+
+  .auth-error{
+    color:var(--red); font-size:12.5px; margin-top:12px; min-height:16px; font-weight:600;
+  }
+  .auth-note{
+    color:var(--text-faint); font-size:12px; margin-top:10px; text-align:center;
+  }
+
+  .auth-submit{
+    width:100%; margin-top:20px;
+  }
+
+  #loading-screen{
+    position:fixed; inset:0; display:flex; align-items:center; justify-content:center;
+    background:var(--bg); color:var(--text-dim); font-size:14px; z-index:200;
+  }
+
+  /* ---------------- RESPONSIVE ---------------- */
+  @media (max-width: 880px){
+    .sidebar{ width:100%; height:auto; position:relative; flex-direction:row; align-items:center; flex-wrap:wrap; }
+    .sidebar-spacer{ display:none; }
+    #app.visible{ flex-direction:column; }
+    .main{ margin-left:0; padding:26px 18px 50px; }
+    .options-grid{ grid-template-columns:1fr; }
+    .grid-2{ grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div id="loading-screen">Loading SuiRu…</div>
+
+<!-- AUTH MODAL -->
+<div id="auth-overlay" class="hidden">
+  <div class="auth-card">
+    <div class="auth-logo">SuiRu<span>.</span></div>
+    <div class="auth-tag">Learn Russian, English &amp; Turkish — properly.</div>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" data-tab="login" onclick="switchAuthTab('login')">Sign In</button>
+      <button class="auth-tab" data-tab="register" onclick="switchAuthTab('register')">Register</button>
+    </div>
+
+    <form id="login-form" onsubmit="handleLogin(event)">
+      <label class="field-label">Username</label>
+      <input class="field-input" id="login-username" autocomplete="username" required />
+      <label class="field-label">Password</label>
+      <input class="field-input" id="login-password" type="password" autocomplete="current-password" required />
+      <div class="auth-error" id="login-error"></div>
+      <button class="btn-primary auth-submit" type="submit">Sign In</button>
+      <div class="auth-note">Admin demo: admin / admin123</div>
+    </form>
+
+    <form id="register-form" style="display:none;" onsubmit="handleRegister(event)">
+      <label class="field-label">Choose a username</label>
+      <input class="field-input" id="register-username" autocomplete="username" required />
+      <label class="field-label">Choose a password</label>
+      <input class="field-input" id="register-password" type="password" autocomplete="new-password" required />
+      <div class="auth-error" id="register-error"></div>
+      <button class="btn-primary auth-submit" type="submit">Create Account</button>
+      <div class="auth-note">New accounts need admin approval before quizzes unlock.</div>
+    </form>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app">
+  <div class="sidebar">
+    <div class="logo">SuiRu<span>.</span></div>
+
+    <div class="nav-label">Course</div>
+    <button class="course-btn" data-course="ru-en" onclick="setCourse('ru-en')">
+      <span class="flags">🇷🇺 ➔ 🇬🇧</span> Russian – English
+    </button>
+    <button class="course-btn" data-course="tr-ru" onclick="setCourse('tr-ru')">
+      <span class="flags">🇹🇷 ➔ 🇷🇺</span> Turkish – Russian
+    </button>
+
+    <div class="nav-label">Level</div>
+    <div class="level-row">
+      <button class="level-btn" data-level="beginner" onclick="setLevel('beginner')">Beginner (A1–A2)</button>
+      <button class="level-btn" data-level="intermediate" onclick="setLevel('intermediate')">Intermediate (B1–B2)</button>
+      <button class="level-btn" data-level="advanced" onclick="setLevel('advanced')">Advanced / IELTS</button>
+    </div>
+
+    <div id="admin-nav" style="margin-top:22px; display:none;">
+      <div class="nav-label">Management</div>
+      <button class="admin-nav-btn" id="admin-toggle" onclick="toggleAdminView()">🛡️ Admin Dashboard</button>
+    </div>
+
+    <div class="sidebar-spacer"></div>
+
+    <div class="online-pill"><span class="dot"></span> <span id="online-count">0</span> online now</div>
+
+    <div class="profile-widget">
+      <div class="avatar" id="avatar-initial">?</div>
+      <div class="profile-meta">
+        <div class="profile-name" id="profile-name">—</div>
+        <div class="profile-role" id="profile-role">—</div>
+      </div>
+      <button class="signout-btn" title="Sign out" onclick="handleLogout()">⏻</button>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <!-- PENDING APPROVAL -->
+    <section id="section-pending" class="section">
+      <div class="glass pending-screen">
+        <div class="icon">⏳</div>
+        <h3 style="margin:0 0 8px;">Awaiting approval</h3>
+        <p style="color:var(--text-dim); font-size:13.5px; margin:0;">
+          Your account has been created but an administrator still needs to approve it before you can start quizzes.
+        </p>
+      </div>
+    </section>
+
+    <!-- DASHBOARD -->
+    <section id="section-dashboard" class="section">
+      <h1 class="page-title">Welcome back, <span id="dash-username">learner</span></h1>
+      <p class="page-sub">Pick a course and a level from the sidebar, then start your session.</p>
+
+      <div class="grid-2">
+        <div class="glass stat-card">
+          <div class="stat-num" id="dash-course-label">Russian – English</div>
+          <div class="stat-label">Active course</div>
+        </div>
+        <div class="glass stat-card">
+          <div class="stat-num" id="dash-level-label">Beginner</div>
+          <div class="stat-label">Active level</div>
+        </div>
+      </div>
+
+      <div class="glass start-card">
+        <div>
+          <h3>Ready for a quiz?</h3>
+          <p>10 questions, instant feedback, and a live progress bar. Your score is shown the moment you finish.</p>
+        </div>
+        <button class="btn-primary" onclick="startQuiz()">Start Quiz →</button>
+      </div>
+    </section>
+
+    <!-- QUIZ -->
+    <section id="section-quiz" class="section">
+      <div class="quiz-wrap">
+        <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%;"></div></div>
+
+        <div class="glass question-card">
+          <div class="question-count" id="question-count">Question 1 / 10</div>
+          <div class="question-text" id="question-text">—</div>
+          <div class="options-grid" id="options-grid"></div>
+        </div>
+
+        <div class="quiz-footer">
+          <div class="quiz-score-live">Score: <span id="live-score">0</span> / <span id="live-total">10</span></div>
+          <button class="btn-ghost" onclick="exitQuiz()">Exit quiz</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESULTS -->
+    <section id="section-results" class="section">
+      <div class="glass results-card quiz-wrap">
+        <div class="results-sub">Quiz complete</div>
+        <div class="results-big" id="results-score">0%</div>
+        <div class="results-sub" id="results-detail">0 out of 10 correct</div>
+        <button class="btn-primary" onclick="startQuiz()">Try Again</button>
+        <button class="btn-ghost" style="margin-left:10px;" onclick="showDashboard()">Back to dashboard</button>
+      </div>
+    </section>
+
+    <!-- ADMIN -->
+    <section id="section-admin" class="section">
+      <h1 class="page-title">Admin Dashboard</h1>
+      <p class="page-sub">Approve new students, manage passwords, and watch who's online right now.</p>
+
+      <div class="grid-2" style="align-items:start;">
+        <div class="glass" style="padding:22px; grid-column:1 / -1;">
+          <h3 style="margin:0 0 16px;">Students</h3>
+          <table class="admin-table">
+            <thead>
+              <tr><th>Username</th><th>Role</th><th>Status</th><th>Actions</th></tr>
+            </thead>
+            <tbody id="admin-users-body"></tbody>
+          </table>
+        </div>
+
+        <div class="glass" style="padding:22px; grid-column:1 / -1;">
+          <h3 style="margin:0 0 14px;">🟢 Online right now</h3>
+          <div class="online-list" id="admin-online-list"></div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<!-- CHANGE PASSWORD MODAL -->
+<div id="pw-overlay" class="hidden" style="position:fixed; inset:0; z-index:110; background:rgba(5,8,15,0.72); backdrop-filter:blur(6px); display:flex; align-items:center; justify-content:center;">
+  <div class="auth-card" style="width:340px;">
+    <div class="auth-logo" style="font-size:18px;">Change password</div>
+    <div class="auth-tag" id="pw-target-username">for user</div>
+    <label class="field-label">New password</label>
+    <input class="field-input" id="pw-new-password" type="password" />
+    <div class="auth-error" id="pw-error"></div>
+    <button class="btn-primary auth-submit" onclick="submitPasswordChange()">Update password</button>
+    <button class="btn-ghost" style="width:100%; margin-top:10px;" onclick="closePasswordModal()">Cancel</button>
+  </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  // STATE
+  let currentUser = null;
+  let currentCourse = 'ru-en';
+  let currentLevel = 'beginner';
+  let socket = null;
+  let pwTargetUserId = null;
+
+  let quiz = { questions: [], index: 0, score: 0, locked: false };
+
+  const courseLabels = { 'ru-en': 'Russian – English', 'tr-ru': 'Turkish – Russian' };
+  const levelLabels = { beginner: 'Beginner', intermediate: 'Intermediate', advanced: 'Advanced / IELTS' };
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+  }
+
+  // API HELPER
+  async function api(path, options) {
+    const res = await fetch(path, Object.assign({
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin'
+    }, options || {}));
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || 'Request failed');
+    return data;
+  }
+
+  // INIT
+  async function init() {
+    try {
+      const data = await api('/api/me');
+      document.getElementById('loading-screen').style.display = 'none';
+      if (data.user) {
+        onLoggedIn(data.user);
+      } else {
+        showAuthModal();
+      }
+    } catch (e) {
+      document.getElementById('loading-screen').style.display = 'none';
+      showAuthModal();
+    }
+  }
+
+  function showAuthModal() {
+    document.getElementById('auth-overlay').classList.remove('hidden');
+    document.getElementById('app').classList.remove('visible');
+  }
+  function hideAuthModal() {
+    document.getElementById('auth-overlay').classList.add('hidden');
+  }
+
+  function switchAuthTab(tab) {
+    document.querySelectorAll('.auth-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+    document.getElementById('login-form').style.display = tab === 'login' ? 'block' : 'none';
+    document.getElementById('register-form').style.display = tab === 'register' ? 'block' : 'none';
+  }
+
+  // AUTH HANDLERS
+  async function handleLogin(e) {
+    e.preventDefault();
+    const errEl = document.getElementById('login-error');
+    errEl.textContent = '';
+    try {
+      const username = document.getElementById('login-username').value;
+      const password = document.getElementById('login-password').value;
+      const data = await api('/api/login', { method: 'POST', body: JSON.stringify({ username, password }) });
+      hideAuthModal();
+      onLoggedIn(data.user);
+    } catch (e2) {
+      errEl.textContent = e2.message;
+    }
+  }
+
+  async function handleRegister(e) {
+    e.preventDefault();
+    const errEl = document.getElementById('register-error');
+    errEl.textContent = '';
+    try {
+      const username = document.getElementById('register-username').value;
+      const password = document.getElementById('register-password').value;
+      const data = await api('/api/register', { method: 'POST', body: JSON.stringify({ username, password }) });
+      hideAuthModal();
+      onLoggedIn(data.user);
+    } catch (e2) {
+      errEl.textContent = e2.message;
+    }
+  }
+
+  async function handleLogout() {
+    await api('/api/logout', { method: 'POST' });
+    if (socket) socket.disconnect();
+    currentUser = null;
+    document.getElementById('app').classList.remove('visible');
+    showAuthModal();
+  }
+
+  // LOGGED IN
+  function onLoggedIn(user) {
+    currentUser = user;
+    document.getElementById('app').classList.add('visible');
+
+    document.getElementById('profile-name').textContent = user.username;
+    document.getElementById('profile-role').textContent = user.role;
+    document.getElementById('avatar-initial').textContent = user.username.charAt(0).toUpperCase();
+    document.getElementById('dash-username').textContent = user.username;
+
+    document.getElementById('admin-nav').style.display = user.role === 'admin' ? 'block' : 'none';
+
+    connectSocket();
+
+    if (user.status !== 'approved') {
+      showSection('pending');
+    } else {
+      setCourse(currentCourse);
+      setLevel(currentLevel);
+      showDashboard();
+    }
+  }
+
+  // SOCKET.IO
+  function connectSocket() {
+    socket = io();
+    socket.on('online-users-update', (list) => {
+      document.getElementById('online-count').textContent = list.length;
+      const box = document.getElementById('admin-online-list');
+      if (box) {
+        if (list.length === 0) {
+          box.innerHTML = '<div style="color:var(--text-faint); font-size:13px;">No one online right now.</div>';
+        } else {
+          box.innerHTML = list.map(u =>
+            `<div class="online-row"><span class="dot"></span> ${escapeHtml(u.username)} <span class="badge ${u.role === 'admin' ? 'admin' : 'approved'}" style="margin-left:auto;">${u.role}</span></div>`
+          ).join('');
+        }
+      }
+    });
+  }
+
+  // NAVIGATION
+  function showSection(name) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('visible'));
+    document.getElementById('section-' + name).classList.add('visible');
+    if (name === 'admin') {
+      document.getElementById('admin-toggle').classList.add('active');
+      loadAdminUsers();
+    } else {
+      document.getElementById('admin-toggle')?.classList.remove('active');
+    }
+  }
+
+  function showDashboard() { showSection('dashboard'); }
+  function toggleAdminView() { showSection('admin'); }
+
+  function setCourse(course) {
+    currentCourse = course;
+    document.querySelectorAll('.course-btn').forEach(b => b.classList.toggle('active', b.dataset.course === course));
+    document.getElementById('dash-course-label').textContent = courseLabels[course];
+  }
+
+  function setLevel(level) {
+    currentLevel = level;
+    document.querySelectorAll('.level-btn').forEach(b => b.classList.toggle('active', b.dataset.level === level));
+    document.getElementById('dash-level-label').textContent = levelLabels[level];
+  }
+
+  // QUIZ
+  async function startQuiz() {
+    try {
+      const data = await api(`/api/quiz/${currentCourse}/${currentLevel}`);
+      quiz = { questions: data.questions, index: 0, score: 0, locked: false };
+      document.getElementById('live-total').textContent = quiz.questions.length;
+      showSection('quiz');
+      renderQuestion();
+    } catch (e) {
+      alert(e.message);
+    }
+  }
+
+  function renderQuestion() {
+    quiz.locked = false;
+    const total = quiz.questions.length;
+    const q = quiz.questions[quiz.index];
+
+    document.getElementById('question-count').textContent = `Question ${quiz.index + 1} / ${total}`;
+    document.getElementById('question-text').textContent = q.q;
+    document.getElementById('live-score').textContent = quiz.score;
+    document.getElementById('progress-fill').style.width = ((quiz.index) / total * 100) + '%';
+
+    const grid = document.getElementById('options-grid');
+    grid.innerHTML = '';
+    q.options.forEach((opt, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'option-btn';
+      btn.textContent = opt;
+      btn.onclick = () => selectAnswer(i);
+      grid.appendChild(btn);
+    });
+  }
+
+  function selectAnswer(i) {
+    if (quiz.locked) return;
+    quiz.locked = true;
+    const q = quiz.questions[quiz.index];
+    const buttons = document.querySelectorAll('#options-grid .option-btn');
+    buttons.forEach(b => b.disabled = true);
+
+    if (i === q.answer) {
+      quiz.score++;
+      buttons[i].classList.add('correct');
+    } else {
+      buttons[i].classList.add('incorrect');
+      buttons[q.answer].classList.add('correct');
+    }
+
+    document.getElementById('live-score').textContent = quiz.score;
+
+    setTimeout(() => {
+      quiz.index++;
+      if (quiz.index >= quiz.questions.length) {
+        finishQuiz();
+      } else {
+        renderQuestion();
+      }
+    }, 950);
+  }
+
+  function finishQuiz() {
+    document.getElementById('progress-fill').style.width = '100%';
+    const pct = Math.round((quiz.score / quiz.questions.length) * 100);
+    document.getElementById('results-score').textContent = pct + '%';
+    document.getElementById('results-detail').textContent = `${quiz.score} out of ${quiz.questions.length} correct`;
+    setTimeout(() => showSection('results'), 350);
+  }
+
+  function exitQuiz() { showDashboard(); }
+
+  // ADMIN
+  async function loadAdminUsers() {
+    try {
+      const data = await api('/api/admin/users');
+      const body = document.getElementById('admin-users-body');
+      const usersList = data.users || data;
+      body.innerHTML = usersList.map(u => `
+        <tr>
+          <td>${escapeHtml(u.username)}</td>
+          <td><span class="badge ${u.role === 'admin' ? 'admin' : 'approved'}">${u.role}</span></td>
+          <td><span class="badge ${u.status}">${u.status}</span></td>
+          <td class="row-actions">
+            ${u.role !== 'admin' ? `
+              <button class="icon-btn approve" onclick="setStatus(${u.id}, 'approved')">Approve</button>
+              <button class="icon-btn reject" onclick="setStatus(${u.id}, 'rejected')">Reject</button>
+            ` : ''}
+            <button class="icon-btn pw" onclick='openPasswordModal(${u.id}, ${JSON.stringify(u.username)})'>PW</button>
+          </td>
+        </tr>
+      `).join('');
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  async function setStatus(userId, status) {
+    try {
+      await api('/api/admin/status', {
+        method: 'POST',
+        body: JSON.stringify({ userId, id: userId, status })
+      });
+      loadAdminUsers();
+    } catch (e) {
+      alert(e.message);
+    }
+  }
+
+  function openPasswordModal(userId, username) {
+    pwTargetUserId = userId;
+    document.getElementById('pw-target-username').textContent = 'for user: ' + username;
+    document.getElementById('pw-new-password').value = '';
+    document.getElementById('pw-error').textContent = '';
+    document.getElementById('pw-overlay').classList.remove('hidden');
+  }
+
+  function closePasswordModal() {
+    document.getElementById('pw-overlay').classList.add('hidden');
+    pwTargetUserId = null;
+  }
+
+  async function submitPasswordChange() {
+    const newPassword = document.getElementById('pw-new-password').value;
+    const errEl = document.getElementById('pw-error');
+    errEl.textContent = '';
+    if (!newPassword) {
+      errEl.textContent = 'Please enter a new password';
+      return;
+    }
+    try {
+      await api('/api/admin/change-password', {
+        method: 'POST',
+        body: JSON.stringify({ userId: pwTargetUserId, id: pwTargetUserId, newPassword })
+      });
+      closePasswordModal();
+      alert('Password updated successfully');
+    } catch (e) {
+      errEl.textContent = e.message;
+    }
+  }
+
+  // Launch on page load
+  init();
+</script>
+</body>
+</html>
