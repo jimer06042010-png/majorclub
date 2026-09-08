@@ -3,12 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Cyber Lounge & PC Club</title>
+<title>Cyber Lounge — 3D Club Map</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/lucide@latest"></script>
+<!-- Three.js & OrbitControls for 3D Map -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
 <style>
   :root{
     --bg-deep:#070913;
@@ -24,55 +28,23 @@
     margin:0; padding:0; overflow-x:hidden;
     background:var(--bg-deep);
     font-family:'Plus Jakarta Sans', sans-serif;
-    color:#EAEAF6;
-    min-height:100vh;
+    color:#EAEAF6; min-height:100vh;
   }
   .font-display{ font-family:'Space Grotesk', sans-serif; }
 
-  /* Nebula backdrop */
-  .nebula-field{ position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none; }
-  .nebula-field::before, .nebula-field::after, .nebula-field .blob{
-    content:''; position:absolute; border-radius:50%; filter:blur(70px);
-  }
-  .nebula-field::before{
-    width:480px; height:480px; top:-160px; left:-140px;
-    background:radial-gradient(circle, rgba(124,58,237,0.55), transparent 70%);
-    animation: drift1 22s ease-in-out infinite;
-  }
-  .nebula-field::after{
-    width:420px; height:420px; bottom:-140px; right:-120px;
-    background:radial-gradient(circle, rgba(6,182,212,0.4), transparent 70%);
-    animation: drift2 26s ease-in-out infinite;
-  }
-  .nebula-field .blob{
-    width:360px; height:360px; top:40%; left:20%;
-    background:radial-gradient(circle, rgba(55,48,163,0.5), transparent 70%);
-    animation: drift3 30s ease-in-out infinite;
-  }
-  @keyframes drift1{ 0%,100%{transform:translate(0,0)} 50%{transform:translate(40px,60px)} }
-  @keyframes drift2{ 0%,100%{transform:translate(0,0)} 50%{transform:translate(-50px,-30px)} }
-  @keyframes drift3{ 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(30px,-40px) scale(1.1)} }
-
-  #stars{ position:fixed; inset:0; z-index:0; pointer-events:none; }
+  /* App container */
   .app{ position:relative; z-index:1; max-width:480px; margin:0 auto; min-height:100vh; padding:18px 16px 110px; }
 
   /* Glass panel */
   .glass{
-    background:var(--bg-panel);
-    backdrop-filter:blur(16px);
-    -webkit-backdrop-filter:blur(16px);
-    border:1px solid var(--border-glow);
-    border-radius:22px;
-    transition: all 0.4s cubic-bezier(0.16,1,0.3,1);
+    background:var(--bg-panel); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+    border:1px solid var(--border-glow); border-radius:22px; transition: all 0.4s cubic-bezier(0.16,1,0.3,1);
   }
 
   .grad-text{
     background:linear-gradient(90deg,#8be9ff, #b794f6 55%, #f472b6);
     -webkit-background-clip:text; background-clip:text; color:transparent;
   }
-
-  .rise{ opacity:0; transform:translateY(18px); animation:fadeInUp 0.6s cubic-bezier(0.16,1,0.3,1) forwards; }
-  @keyframes fadeInUp{ to{ opacity:1; transform:translateY(0);} }
 
   /* Cosmic buttons */
   .btn-cosmic{
@@ -82,44 +54,19 @@
     box-shadow: 0 0 0 1px rgba(255,255,255,0.04) inset,
                 0 8px 24px -6px rgba(124,58,237,0.55),
                 0 2px 10px -2px rgba(6,182,212,0.35);
-    transition: all 0.4s cubic-bezier(0.16,1,0.3,1);
-    cursor:pointer;
+    transition: all 0.4s cubic-bezier(0.16,1,0.3,1); cursor:pointer;
   }
   .btn-cosmic:active{ transform:scale(0.96); }
 
   .card-tap{ transition: all 0.3s cubic-bezier(0.16,1,0.3,1); cursor:pointer; }
   .card-tap:active{ transform:scale(0.97); }
 
-  /* Progress bar */
-  .neon-bar-track{ background:rgba(255,255,255,0.06); border-radius:999px; overflow:hidden; }
-  .neon-bar-fill{
-    height:100%; border-radius:999px;
-    background:linear-gradient(90deg, var(--cyan), var(--purple));
-    box-shadow:0 0 12px rgba(6,182,212,0.7), 0 0 4px rgba(124,58,237,0.8);
-    transition: width 0.8s cubic-bezier(0.16,1,0.3,1);
-  }
-
-  /* PC Zone pill */
-  .level-pill{
-    padding:9px 14px; border-radius:14px; white-space:nowrap;
-    font-family:'Space Grotesk', sans-serif; font-weight:600; font-size:13px;
-    border:1px solid var(--border-glow); background:var(--bg-panel);
-    transition: all 0.4s cubic-bezier(0.16,1,0.3,1); cursor:pointer;
-  }
-  .level-pill.active{
-    background:linear-gradient(135deg, var(--purple), var(--cyan));
-    border-color:transparent; color:#fff;
-    box-shadow:0 6px 20px -4px rgba(124,58,237,0.6);
-  }
-
   /* Bottom tab bar */
   .tabbar{
     position:fixed; left:50%; transform:translateX(-50%); bottom:14px; z-index:20;
     width:calc(100% - 32px); max-width:448px;
-    background:rgba(12,14,24,0.75);
-    backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
-    border:1px solid var(--border-glow); border-radius:22px;
-    padding:8px; display:flex; justify-content:space-between;
+    background:rgba(12,14,24,0.85); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+    border:1px solid var(--border-glow); border-radius:22px; padding:8px; display:flex; justify-content:space-between;
   }
   .tab-item{
     flex:1; display:flex; flex-direction:column; align-items:center; gap:3px;
@@ -129,16 +76,7 @@
   .tab-item.active{ color:#fff; background:rgba(255,255,255,0.08); }
   .tab-item span{ font-size:10.5px; font-weight:600; }
 
-  .stat-chip{
-    display:flex; align-items:center; gap:6px; padding:7px 12px; border-radius:14px;
-    background:var(--bg-panel); border:1px solid var(--border-glow);
-    font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:13px;
-  }
-
-  .streak-flame{ animation:flicker 2.2s ease-in-out infinite; }
-  @keyframes flicker{ 0%,100%{ filter:drop-shadow(0 0 4px rgba(236,72,153,0.6)); } 50%{ filter:drop-shadow(0 0 10px rgba(236,72,153,0.9)); } }
-
-  /* Language Selector Pills */
+  /* Language Selector */
   .lang-btn{
     flex:1; text-align:center; padding:10px 12px; border-radius:14px;
     border:1px solid var(--border-glow); background:rgba(255,255,255,0.03);
@@ -149,21 +87,42 @@
     color:#fff; border-color:transparent; box-shadow:0 4px 15px rgba(124,58,237,0.4);
   }
 
+  /* Views */
   .view{ display:none; }
   .view.active-view{ display:block; }
+
+  /* 3D Map Modal Container */
+  #map-container{
+    width: 100%; height: 380px; border-radius: 20px; overflow: hidden;
+    position: relative; background: #04060f; border: 1px solid rgba(255,255,255,0.1);
+  }
+  #map-canvas{ width: 100%; height: 100%; display: block; }
+  
+  /* Map Controls Overlay */
+  .map-badge{
+    position: absolute; top: 12px; left: 12px; z-index: 5;
+    background: rgba(7, 9, 19, 0.75); backdrop-filter: blur(8px);
+    padding: 6px 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);
+    font-size: 11px; font-weight: 600;
+  }
+  .map-legend{
+    position: absolute; bottom: 12px; left: 12px; right: 12px; z-index: 5;
+    background: rgba(7, 9, 19, 0.8); backdrop-filter: blur(10px);
+    padding: 8px 12px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.1);
+    display: flex; justify-content: space-around; font-size: 11px;
+  }
+  .legend-item{ display: flex; align-items: center; gap: 5px; }
+  .dot{ width: 8px; height: 8px; border-radius: 50%; }
 
   ::-webkit-scrollbar{ display:none; }
 </style>
 </head>
 <body>
 
-<div class="nebula-field"><div class="blob"></div></div>
-<canvas id="stars"></canvas>
-
 <div class="app">
 
   <!-- Top Header -->
-  <div class="flex items-center justify-between rise mb-4">
+  <div class="flex items-center justify-between mb-4">
     <div class="flex items-center gap-3">
       <div class="w-12 h-12 rounded-2xl glass flex items-center justify-center" style="border-color:rgba(124,58,237,0.4)">
         <i data-lucide="gamepad-2" class="w-6 h-6" style="color:#b794f6"></i>
@@ -173,67 +132,45 @@
         <p class="font-display font-semibold text-[15px]" data-i18n="gamer">Cyber Gamer</p>
       </div>
     </div>
-    <div class="stat-chip">
-      <i data-lucide="flame" class="w-4 h-4 streak-flame" style="color:#ec4899"></i>
-      <span>7 Days</span>
+    <div class="glass px-3 py-1.5 flex items-center gap-1.5">
+      <i data-lucide="flame" class="w-4 h-4 text-pink-500"></i>
+      <span class="font-display font-bold text-[13px]">VIP Gold</span>
     </div>
   </div>
 
   <!-- VIEW: HOME -->
   <div id="view-home" class="view active-view">
     
-    <!-- PC Zones (Left Aligned) -->
-    <div class="mt-2 rise" style="animation-delay:.05s">
-      <p class="font-display font-semibold text-[14px] mb-2.5 px-1 text-left" data-i18n="zonesTitle">PC Zones</p>
-      <div class="flex gap-2.5 overflow-x-auto pb-1 justify-start" style="scrollbar-width:none;">
-        <div class="level-pill active">Standard</div>
-        <div class="level-pill active">Comfort</div>
-        <div class="level-pill active">VIP Lounge</div>
-        <div class="level-pill active">Bootcamp</div>
-        <div class="level-pill active">PS5 Room</div>
-      </div>
-    </div>
-
-    <!-- Balance & VIP Rank Card -->
-    <div class="glass p-5 mt-4 rise" style="animation-delay:.1s">
+    <!-- Balance Card -->
+    <div class="glass p-5">
       <div class="flex items-start justify-between">
         <div>
-          <p class="text-[12px] mb-1" style="color:var(--text-dim)" data-i18n="rank">Club Rank</p>
-          <p class="font-display font-bold text-[22px] grad-text">VIP Gold Member</p>
+          <p class="text-[12px] mb-1" style="color:var(--text-dim)" data-i18n="balance">Balance</p>
+          <p class="font-display font-bold text-[24px] grad-text">2,480 PTS</p>
         </div>
-        <div class="text-right">
-          <p class="text-[12px]" style="color:var(--text-dim)" data-i18n="balance">Balance</p>
-          <p class="font-display font-bold text-[22px] grad-text">2,480 PTS</p>
-        </div>
+        <button id="seeMapBtnMain" class="btn-cosmic px-4 py-2 rounded-xl font-display font-semibold text-[12px] flex items-center gap-1.5">
+          <i data-lucide="box" class="w-4 h-4"></i>
+          <span data-i18n="seeMap">See 3D Map</span>
+        </button>
       </div>
 
-      <div class="mt-4">
-        <div class="flex justify-between text-[11px] mb-1.5" style="color:var(--text-dim)">
-          <span>To Platinum Rank</span>
-          <span>68%</span>
-        </div>
-        <div class="neon-bar-track h-2.5">
-          <div class="neon-bar-fill" style="width:0%" data-target="68%"></div>
-        </div>
-      </div>
-
-      <button id="bookPcBtn" class="btn-cosmic w-full mt-5 py-4 rounded-2xl font-display font-semibold text-[15px] flex items-center justify-center gap-2">
+      <button id="bookPcBtn" class="btn-cosmic w-full mt-5 py-3.5 rounded-2xl font-display font-semibold text-[14px] flex items-center justify-center gap-2">
         <i data-lucide="monitor" class="w-5 h-5"></i>
-        <span data-i18n="bookPcBtn">Book a Gaming PC</span>
+        <span data-i18n="bookPcBtn">Quick PC Booking</span>
       </button>
     </div>
 
-    <!-- Main Club Services -->
-    <div class="mt-5 rise" style="animation-delay:.15s">
-      <p class="font-display font-semibold text-[14px] mb-2.5 px-1 text-left" data-i18n="servicesTitle">Services</p>
+    <!-- Main Services Grid -->
+    <div class="mt-5">
+      <p class="font-display font-semibold text-[14px] mb-2.5 px-1" data-i18n="servicesTitle">Services</p>
       <div class="grid grid-cols-2 gap-3">
 
-        <div class="glass card-tap p-4" data-open-view="booking">
+        <div class="glass card-tap p-4" data-open-view="map">
           <div class="w-10 h-10 rounded-xl flex items-center justify-center mb-3" style="background:rgba(6,182,212,0.14)">
-            <i data-lucide="monitor-check" class="w-5 h-5" style="color:var(--cyan)"></i>
+            <i data-lucide="map" class="w-5 h-5" style="color:var(--cyan)"></i>
           </div>
-          <p class="font-display font-semibold text-[14px]" data-i18n="pcBooking">PC Booking</p>
-          <p class="text-[11.5px] mt-0.5" style="color:var(--text-dim)" data-i18n="pcSub">18 PCs free</p>
+          <p class="font-display font-semibold text-[14px]" data-i18n="seeMap">3D Interactive Map</p>
+          <p class="text-[11.5px] mt-0.5" style="color:var(--text-dim)">Realtime floor layout</p>
         </div>
 
         <div class="glass card-tap p-4" data-open-view="bar">
@@ -241,61 +178,49 @@
             <i data-lucide="coffee" class="w-5 h-5" style="color:#b794f6"></i>
           </div>
           <p class="font-display font-semibold text-[14px]" data-i18n="barMenu">Bar & Food</p>
-          <p class="text-[11.5px] mt-0.5" style="color:var(--text-dim)" data-i18n="barSub">Order to seat</p>
+          <p class="text-[11.5px] mt-0.5" style="color:var(--text-dim)">Order to seat</p>
         </div>
 
-        <div class="glass card-tap p-4" data-open-view="bar">
-          <div class="w-10 h-10 rounded-xl flex items-center justify-center mb-3" style="background:rgba(236,72,153,0.14)">
-            <i data-lucide="swords" class="w-5 h-5" style="color:#ec4899"></i>
-          </div>
-          <p class="font-display font-semibold text-[14px]" data-i18n="tournaments">Tournaments</p>
-          <p class="text-[11.5px] mt-0.5" style="color:var(--text-dim)" data-i18n="tournSub">CS2 / Dota 2</p>
-        </div>
-
-        <div class="glass card-tap p-4" data-open-view="leaderboard">
-          <div class="w-10 h-10 rounded-xl flex items-center justify-center mb-3" style="background:rgba(255,255,255,0.08)">
-            <i data-lucide="trophy" class="w-5 h-5" style="color:#fbbf24"></i>
-          </div>
-          <p class="font-display font-semibold text-[14px]" data-i18n="leaderboard">Leaderboard</p>
-          <p class="text-[11.5px] mt-0.5" style="color:var(--text-dim)" data-i18n="lbSub">Rank #12</p>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- Weekly Gaming Activity -->
-    <div class="glass p-4 mt-5 flex items-center justify-between rise" style="animation-delay:.2s">
-      <div class="flex items-center gap-3">
-        <i data-lucide="clock" class="w-5 h-5" style="color:var(--cyan)"></i>
-        <div>
-          <p class="font-display font-semibold text-[13.5px]" data-i18n="weeklyGoal">Weekly Playtime</p>
-          <p class="text-[11px]" style="color:var(--text-dim)">18 / 25 Hours</p>
-        </div>
-      </div>
-      <div class="neon-bar-track h-2 w-20">
-        <div class="neon-bar-fill" style="width:0%" data-target="72%"></div>
       </div>
     </div>
 
   </div>
 
-  <!-- VIEW: BOOKING -->
-  <div id="view-booking" class="view">
-    <div class="glass p-5">
-      <h2 class="font-display font-bold text-[18px] mb-4 grad-text" data-i18n="pcBooking">PC Booking</h2>
-      <div class="space-y-3">
-        <p class="text-[13px]" style="color:var(--text-dim)">Select available seat:</p>
-        <div class="grid grid-cols-4 gap-2.5">
-          <button class="glass p-3 text-center rounded-xl font-display font-bold border-cyan-400/50 text-cyan-300">PC-01</button>
-          <button class="glass p-3 text-center rounded-xl font-display font-bold border-cyan-400/50 text-cyan-300">PC-02</button>
-          <button class="glass p-3 text-center rounded-xl font-display font-bold opacity-40 text-red-400" disabled>PC-03</button>
-          <button class="glass p-3 text-center rounded-xl font-display font-bold border-cyan-400/50 text-cyan-300">PC-04</button>
-          <button class="glass p-3 text-center rounded-xl font-display font-bold border-cyan-400/50 text-cyan-300">PC-05</button>
-          <button class="glass p-3 text-center rounded-xl font-display font-bold opacity-40 text-red-400" disabled>PC-06</button>
-          <button class="glass p-3 text-center rounded-xl font-display font-bold border-cyan-400/50 text-cyan-300">PC-07</button>
-          <button class="glass p-3 text-center rounded-xl font-display font-bold border-cyan-400/50 text-cyan-300">PC-08</button>
+  <!-- VIEW: 3D MAP VIEW -->
+  <div id="view-map" class="view">
+    <div class="glass p-4 mb-4">
+      <div class="flex justify-between items-center mb-3">
+        <div>
+          <h2 class="font-display font-bold text-[18px] grad-text" data-i18n="interactiveMap">3D Club Map</h2>
+          <p class="text-[11px]" style="color:var(--text-dim)">Rotate & Tap PC to select</p>
         </div>
-        <button class="btn-cosmic w-full mt-4 py-3.5 rounded-xl font-display font-semibold text-[14px]">Confirm Booking</button>
+        <button id="resetCamBtn" class="glass px-2.5 py-1 text-[11px] font-semibold flex items-center gap-1">
+          <i data-lucide="rotate-ccw" class="w-3 h-3"></i> Reset
+        </button>
+      </div>
+
+      <!-- Canvas Box -->
+      <div id="map-container">
+        <div class="map-badge">📍 Click PC to Inspect</div>
+        <canvas id="map-canvas"></canvas>
+        <div class="map-legend">
+          <div class="legend-item"><div class="dot bg-emerald-500"></div> Free</div>
+          <div class="legend-item"><div class="dot bg-red-500"></div> Busy</div>
+          <div class="legend-item"><div class="dot bg-cyan-400"></div> Selected</div>
+        </div>
+      </div>
+
+      <!-- Selected PC Drawer -->
+      <div id="pcDetails" class="mt-4 p-3.5 glass hidden">
+        <div class="flex justify-between items-center">
+          <div>
+            <p id="pcName" class="font-display font-bold text-[15px] text-cyan-300">PC #12</p>
+            <p id="pcZone" class="text-[11px]" style="color:var(--text-dim)">Zone: VIP Room 2</p>
+          </div>
+          <button id="confirmPcBook" class="btn-cosmic px-4 py-2 rounded-xl font-display font-bold text-[12px]">
+            Book Seat
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -319,52 +244,6 @@
           </div>
           <button class="btn-cosmic px-3 py-1.5 rounded-lg text-[12px] font-bold">+ Order</button>
         </div>
-        <div class="glass p-3.5 flex justify-between items-center">
-          <div>
-            <p class="font-semibold text-[14px]">Gaming Combo</p>
-            <p class="text-[11px]" style="color:var(--text-dim)">Pizza + Drink + Chips</p>
-          </div>
-          <button class="btn-cosmic px-3 py-1.5 rounded-lg text-[12px] font-bold">+ Order</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- VIEW: LEADERBOARD -->
-  <div id="view-leaderboard" class="view">
-    <div class="glass p-5">
-      <h2 class="font-display font-bold text-[18px] mb-4 grad-text" data-i18n="leaderboard">Leaderboard</h2>
-      <div class="space-y-3">
-        <div class="glass p-3 flex items-center justify-between border-amber-500/30">
-          <div class="flex items-center gap-3">
-            <span class="font-display font-bold text-[16px] text-amber-400">#1</span>
-            <div>
-              <p class="font-semibold text-[14px]">s1mple_pro</p>
-              <p class="text-[11px]" style="color:var(--text-dim)">142 hours this month</p>
-            </div>
-          </div>
-          <span class="font-display font-bold text-[14px]">18,400 PTS</span>
-        </div>
-        <div class="glass p-3 flex items-center justify-between">
-          <div class="flex items-center gap-3">
-            <span class="font-display font-bold text-[16px] text-slate-300">#2</span>
-            <div>
-              <p class="font-semibold text-[14px]">Cyber_King</p>
-              <p class="text-[11px]" style="color:var(--text-dim)">118 hours this month</p>
-            </div>
-          </div>
-          <span class="font-display font-bold text-[14px]">14,200 PTS</span>
-        </div>
-        <div class="glass p-3 flex items-center justify-between" style="border-color:rgba(124,58,237,0.5)">
-          <div class="flex items-center gap-3">
-            <span class="font-display font-bold text-[16px] text-purple-400">#12</span>
-            <div>
-              <p class="font-semibold text-[14px]" data-i18n="gamer">Cyber Gamer (You)</p>
-              <p class="text-[11px]" style="color:var(--text-dim)">42 hours this month</p>
-            </div>
-          </div>
-          <span class="font-display font-bold text-[14px]">2,480 PTS</span>
-        </div>
       </div>
     </div>
   </div>
@@ -383,17 +262,6 @@
           <button class="lang-btn" data-lang="uz">O'zbek</button>
         </div>
       </div>
-
-      <div class="mt-6 pt-4 border-t border-white/10 space-y-3">
-        <div class="flex justify-between items-center text-[13px]">
-          <span style="color:var(--text-dim)">App Version</span>
-          <span class="font-mono">Cyber Club v3.0</span>
-        </div>
-        <div class="flex justify-between items-center text-[13px]">
-          <span style="color:var(--text-dim)">Haptic Feedback</span>
-          <span class="text-emerald-400">Enabled</span>
-        </div>
-      </div>
     </div>
   </div>
 
@@ -405,13 +273,13 @@
     <i data-lucide="home" class="w-5 h-5"></i>
     <span data-i18n="tabHome">Home</span>
   </div>
-  <div class="tab-item" data-tab="booking">
-    <i data-lucide="monitor" class="w-5 h-5"></i>
-    <span data-i18n="tabBooking">Book PC</span>
+  <div class="tab-item" data-tab="map">
+    <i data-lucide="box" class="w-5 h-5"></i>
+    <span data-i18n="tabMap">3D Map</span>
   </div>
   <div class="tab-item" data-tab="bar">
     <i data-lucide="coffee" class="w-5 h-5"></i>
-    <span data-i18n="tabBar">Bar Menu</span>
+    <span data-i18n="tabBar">Bar</span>
   </div>
   <div class="tab-item" data-tab="profile">
     <i data-lucide="user" class="w-5 h-5"></i>
@@ -422,91 +290,28 @@
 <script>
   lucide.createIcons();
 
-  // Telegram WebApp init
-  if (window.Telegram && window.Telegram.WebApp) {
-    Telegram.WebApp.ready();
-    Telegram.WebApp.expand();
-  }
-
-  function haptic(style){
-    if (window.Telegram && Telegram.WebApp && Telegram.WebApp.HapticFeedback) {
-      Telegram.WebApp.HapticFeedback.impactOccurred(style || 'medium');
-    }
-  }
-
-  // Multilingual Dictionary
+  // Translations
   const translations = {
     en: {
-      welcome: "Welcome back",
-      gamer: "Cyber Gamer",
-      zonesTitle: "PC Zones",
-      rank: "Club Rank",
-      balance: "Balance",
-      bookPcBtn: "Book a Gaming PC",
-      servicesTitle: "Services",
-      pcBooking: "PC Booking",
-      pcSub: "18 PCs free",
-      barMenu: "Bar & Food",
-      barSub: "Order to seat",
-      tournaments: "Tournaments",
-      tournSub: "CS2 / Dota 2",
-      leaderboard: "Leaderboard",
-      lbSub: "Rank #12",
-      weeklyGoal: "Weekly Playtime",
-      tabHome: "Home",
-      tabBooking: "Book PC",
-      tabBar: "Bar Menu",
-      tabProfile: "Profile",
-      profileTitle: "Profile & Settings",
-      selectLang: "Interface Language"
+      welcome: "Welcome back", gamer: "Cyber Gamer", balance: "Balance",
+      seeMap: "3D Club Map", bookPcBtn: "Quick PC Booking", servicesTitle: "Services",
+      barMenu: "Bar & Food", tabHome: "Home", tabMap: "3D Map", tabBar: "Bar",
+      tabProfile: "Profile", profileTitle: "Profile & Settings", selectLang: "Interface Language",
+      interactiveMap: "3D Interactive Map"
     },
     ru: {
-      welcome: "С возвращением",
-      gamer: "Геймер",
-      zonesTitle: "Зоны ПК",
-      rank: "Ранг в клубе",
-      balance: "Баланс",
-      bookPcBtn: "Забронировать ПК",
-      servicesTitle: "Услуги клуба",
-      pcBooking: "Бронь ПК",
-      pcSub: "18 ПК свободно",
-      barMenu: "Бар и Еда",
-      barSub: "Заказ к месту",
-      tournaments: "Турниры",
-      tournSub: "CS2 / Dota 2",
-      leaderboard: "Топ Игроков",
-      lbSub: "12 место",
-      weeklyGoal: "Время за неделю",
-      tabHome: "Главная",
-      tabBooking: "Бронь ПК",
-      tabBar: "Меню бара",
-      tabProfile: "Профиль",
-      profileTitle: "Профиль и Настройки",
-      selectLang: "Язык интерфейса"
+      welcome: "С возвращением", gamer: "Геймер", balance: "Баланс",
+      seeMap: "3D Карта Зала", bookPcBtn: "Быстрая Бронь ПК", servicesTitle: "Услуги клуба",
+      barMenu: "Бар и Еда", tabHome: "Главная", tabMap: "3D Карта", tabBar: "Бар",
+      tabProfile: "Профиль", profileTitle: "Профиль и Настройки", selectLang: "Язык интерфейса",
+      interactiveMap: "Интерактивная 3D Карта"
     },
     uz: {
-      welcome: "Xush kelibsiz",
-      gamer: "Geymer",
-      zonesTitle: "PK Zonalari",
-      rank: "Klub Maqomi",
-      balance: "Balans",
-      bookPcBtn: "PK Band Qilish",
-      servicesTitle: "Xizmatlar",
-      pcBooking: "PK Bron",
-      pcSub: "18 ta PK bo'sh",
-      barMenu: "Bar va Taomlar",
-      barSub: "Joyga buyurtma",
-      tournaments: "Turnirlar",
-      tournSub: "CS2 / Dota 2",
-      leaderboard: "Peshqadamlar",
-      lbSub: "12-o'rin",
-      weeklyGoal: "Haftalik vaqt",
-      tabHome: "Bosh sahifa",
-      tabBooking: "PK Bron",
-      tabBar: "Bar Menyusi",
-      tabProfile: "Profil",
-      profileTitle: "Profil va Sozlamalar",
-      selectLang: "Interfeys tili"
+      welcome: "Xush kelibsiz", gamer: "Geymer", balance: "Balans",
+      seeMap: "3D Xarita", bookPcBtn: "Tezkor PK Bron", servicesTitle: "Xizmatlar",
+      barMenu: "Bar va Taomlar", tabHome: "Bosh sahifa", tabMap: "3D Xarita", tabBar: "Bar",
+      tabProfile: "Profil", profileTitle: "Profil va Sozlamalar", selectLang: "Interfeys tili",
+      interactiveMap: "3D Interaktiv Xarita"
     }
   };
 
@@ -531,75 +336,225 @@
     document.querySelectorAll('.tab-item').forEach(t => {
       t.classList.toggle('active', t.getAttribute('data-tab') === viewId);
     });
+
+    if (viewId === 'map' && !mapInitialized) {
+      setTimeout(init3DMap, 100);
+    }
   }
 
-  // Click Event Listeners
   document.querySelectorAll('.tab-item').forEach(tab => {
-    tab.addEventListener('click', () => {
-      const targetView = tab.getAttribute('data-tab');
-      switchView(targetView);
-      haptic('light');
-    });
+    tab.addEventListener('click', () => switchView(tab.getAttribute('data-tab')));
   });
-
   document.querySelectorAll('[data-open-view]').forEach(card => {
-    card.addEventListener('click', () => {
-      const view = card.getAttribute('data-open-view');
-      switchView(view);
-      haptic('light');
-    });
+    card.addEventListener('click', () => switchView(card.getAttribute('data-open-view')));
   });
-
-  document.getElementById('bookPcBtn').addEventListener('click', () => {
-    switchView('booking');
-    haptic('medium');
-  });
+  document.getElementById('seeMapBtnMain').addEventListener('click', () => switchView('map'));
+  document.getElementById('bookPcBtn').addEventListener('click', () => switchView('map'));
 
   document.querySelectorAll('.lang-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const lang = btn.getAttribute('data-lang');
-      setLanguage(lang);
-      haptic('medium');
-    });
+    btn.addEventListener('click', () => setLanguage(btn.getAttribute('data-lang')));
   });
 
-  // Progress Bar Animation
-  window.addEventListener('load', () => {
-    document.querySelectorAll('.neon-bar-fill').forEach(el => {
-      const target = el.getAttribute('data-target');
-      requestAnimationFrame(() => { el.style.width = target; });
-    });
-  });
+  /* ========================================================
+     THREE.JS 3D MAP ENGINE (BASED ON YOUR EXACT LAYOUT)
+     ======================================================== */
+  let mapInitialized = false;
+  let scene, camera, renderer, controls, pcObjects = [];
+  let selectedPC = null;
 
-  // Starfield Canvas Background
-  const canvas = document.getElementById('stars');
-  const ctx = canvas.getContext('2d');
-  let stars = [];
-  function resize(){
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    stars = Array.from({length: Math.floor((canvas.width * canvas.height) / 9000)}, () => ({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      r: Math.random() * 1.3 + 0.2,
-      s: Math.random() * 0.02 + 0.005,
-      phase: Math.random() * Math.PI * 2
-    }));
-  }
-  function draw(t){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    for (const st of stars){
-      const alpha = 0.35 + 0.55 * Math.abs(Math.sin(st.phase + t * st.s));
-      ctx.beginPath();
-      ctx.arc(st.x, st.y, st.r, 0, Math.PI*2);
-      ctx.fillStyle = `rgba(220,225,255,${alpha})`;
-      ctx.fill();
+  function init3DMap() {
+    mapInitialized = true;
+    const container = document.getElementById('map-container');
+    const canvas = document.getElementById('map-canvas');
+
+    // 1. Scene setup
+    scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x050714);
+
+    // 2. Camera setup
+    camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+    camera.position.set(0, 32, 28);
+
+    // 3. Renderer setup
+    renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    // 4. Controls
+    controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    controls.maxPolarAngle = Math.PI / 2.2;
+    controls.target.set(0, 0, 0);
+
+    // 5. Lights
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+    scene.add(ambientLight);
+
+    const dirLight = new THREE.DirectionalLight(0xa5b4fc, 0.8);
+    dirLight.position.set(10, 20, 10);
+    scene.add(dirLight);
+
+    // Glowing Neon Lights
+    const cyanLight = new THREE.PointLight(0x06b6d4, 1.2, 30);
+    cyanLight.position.set(-8, 5, -8);
+    scene.add(cyanLight);
+
+    const purpleLight = new THREE.PointLight(0x7c3aed, 1.2, 30);
+    purpleLight.position.set(8, 5, 8);
+    scene.add(purpleLight);
+
+    // 6. Floor
+    const floorGeo = new THREE.PlaneGeometry(28, 36);
+    const floorMat = new THREE.MeshStandardMaterial({ color: 0x0a0e1a, roughness: 0.4 });
+    const floor = new THREE.Mesh(floorGeo, floorMat);
+    floor.rotation.x = -Math.PI / 2;
+    scene.add(floor);
+
+    // Floor Grid Line Overlay
+    const grid = new THREE.GridHelper(36, 18, 0x06b6d4, 0x1e293b);
+    grid.position.y = 0.02;
+    scene.add(grid);
+
+    // Helper Function to Create Wall Blocks
+    function createWall(x, z, w, d, h = 2) {
+      const wallGeo = new THREE.BoxGeometry(w, h, d);
+      const wallMat = new THREE.MeshStandardMaterial({ color: 0x1e1b4b, opacity: 0.7, transparent: true });
+      const wall = new THREE.Mesh(wallGeo, wallMat);
+      wall.position.set(x, h / 2, z);
+      scene.add(wall);
     }
-    requestAnimationFrame(draw);
+
+    // Build Layout Walls according to your sketch
+    // Outer Walls
+    createWall(-13.5, 0, 0.5, 35); // Left
+    createWall(13.5, 0, 0.5, 35);  // Right
+    createWall(0, -17.5, 27, 0.5); // Top
+    createWall(0, 17.5, 27, 0.5);  // Bottom
+
+    // VIP Rooms (Left Column: 1, 2, 3, 4)
+    createWall(-7.5, 0, 0.5, 34);  // Inner vertical wall for VIP
+    createWall(-10.5, 9, 6, 0.4);   // Divider VIP 1
+    createWall(-10.5, 1, 6, 0.4);   // Divider VIP 2
+    createWall(-10.5, -7, 6, 0.4);  // Divider VIP 3
+
+    // PRO Rooms (Top Row: 5, 1, 2)
+    createWall(0, -11.5, 27, 0.5);  // Horizontal wall for PRO rooms
+    createWall(-4.5, -14.5, 0.4, 6); // Divider between Room 5 & Pro 1
+    createWall(4.5, -14.5, 0.4, 6);  // Divider between Pro 1 & Pro 2
+
+    // Bar / Reception (Bottom Right)
+    createWall(5, 11.5, 12, 0.4);
+    createWall(-1, 14.5, 0.4, 6);
+
+    // BAR Text Marker Geometry
+    const barGeo = new THREE.BoxGeometry(8, 0.8, 4);
+    const barMat = new THREE.MeshStandardMaterial({ color: 0x7c3aed });
+    const barMesh = new THREE.Mesh(barGeo, barMat);
+    barMesh.position.set(5, 0.4, 14.5);
+    scene.add(barMesh);
+
+    // Helper Function to Create PC Models
+    let pcIdCounter = 1;
+    function createPC(x, z, zoneName, isBusy = false) {
+      const group = new THREE.Group();
+      group.position.set(x, 0, z);
+
+      // Desk
+      const deskGeo = new THREE.BoxGeometry(1.6, 0.8, 1.0);
+      const deskMat = new THREE.MeshStandardMaterial({ color: 0x111827 });
+      const desk = new THREE.Mesh(deskGeo, deskMat);
+      desk.position.y = 0.4;
+      group.add(desk);
+
+      // Monitor Screen (Interactive Color)
+      const statusColor = isBusy ? 0xef4444 : 0x10b981; // Red = Busy, Green = Free
+      const monGeo = new THREE.BoxGeometry(1.2, 0.7, 0.1);
+      const monMat = new THREE.MeshBasicMaterial({ color: statusColor });
+      const monitor = new THREE.Mesh(monGeo, monMat);
+      monitor.position.set(0, 1.2, -0.2);
+      group.add(monitor);
+
+      // Store Metadata
+      group.userData = {
+        id: pcIdCounter++,
+        zone: zoneName,
+        isBusy: isBusy,
+        monitorMat: monMat,
+        originalColor: statusColor
+      };
+
+      scene.add(group);
+      pcObjects.push(monitor); // Add monitor mesh for raycasting click
+    }
+
+    // Populate PCs per Sketch Layout:
+
+    // 1. VIP Rooms (Left) - 5 PCs each
+    for(let i=0; i<5; i++) createPC(-10.5, 13 - i*0.8, "VIP Room 1", i===1);
+    for(let i=0; i<5; i++) createPC(-10.5, 5 - i*0.8, "VIP Room 2", i===3);
+    for(let i=0; i<5; i++) createPC(-10.5, -3 - i*0.8, "VIP Room 3", false);
+    for(let i=0; i<5; i++) createPC(-10.5, -9 - i*0.8, "VIP Room 4", i===0);
+
+    // 2. Top Rooms (5, 1, 2) - 5 PCs each
+    for(let i=0; i<5; i++) createPC(-11 + i*1.3, -14.5, "VIP Room 5", false);
+    for(let i=0; i<5; i++) createPC(-2.5 + i*1.3, -14.5, "Pro Zone 1", i===2);
+    for(let i=0; i<5; i++) createPC(6 + i*1.3, -14.5, "Pro Zone 2", false);
+
+    // 3. Central Main Hall Rows (5 PCs in each row)
+    for(let i=0; i<5; i++) createPC(-4 + i*1.8, -8, "Main Hall Row 4", i===4);
+    for(let i=0; i<5; i++) createPC(-4 + i*1.8, -3, "Main Hall Row 3", false);
+    for(let i=0; i<5; i++) createPC(-4 + i*1.8, 2, "Main Hall Row 2", i===1);
+    for(let i=0; i<5; i++) createPC(-4 + i*1.8, 7, "Main Hall Row 1", false);
+
+    // 7. Click Detection (Raycaster)
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+
+    canvas.addEventListener('click', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      mouse.x = ((e.clientX - rect.left) / container.clientWidth) * 2 - 1;
+      mouse.y = -((e.clientY - rect.top) / container.clientHeight) * 2 + 1;
+
+      raycaster.setFromCamera(mouse, camera);
+      const intersects = raycaster.intersectObjects(pcObjects);
+
+      if (intersects.length > 0) {
+        const clickedMonitor = intersects[0].object;
+        const pcGroup = clickedMonitor.parent;
+        const data = pcGroup.userData;
+
+        if (data.isBusy) return; // Can't select busy PC
+
+        // Reset previous selection
+        if (selectedPC && selectedPC !== data) {
+          selectedPC.monitorMat.color.setHex(selectedPC.originalColor);
+        }
+
+        // Set cyan selection color
+        selectedPC = data;
+        selectedPC.monitorMat.color.setHex(0x06b6d4);
+
+        // Show Details Panel
+        document.getElementById('pcDetails').classList.remove('hidden');
+        document.getElementById('pcName').innerText = `PC #${data.id}`;
+        document.getElementById('pcZone').innerText = `Zone: ${data.zone}`;
+      }
+    });
+
+    document.getElementById('resetCamBtn').addEventListener('click', () => {
+      camera.position.set(0, 32, 28);
+      controls.target.set(0, 0, 0);
+    });
+
+    // 8. Render Loop
+    function animate() {
+      requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    animate();
   }
-  resize();
-  window.addEventListener('resize', resize);
-  requestAnimationFrame(draw);
 </script>
 
 </body>
