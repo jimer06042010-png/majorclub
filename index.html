@@ -29,6 +29,14 @@
   }
   .font-title { font-family: 'Space Grotesk', sans-serif; }
 
+  /* Interactive Button Scale Animations */
+  button, .tab-btn, .pc-dot, .wc-btn {
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  button:active, .tab-btn:active, .pc-dot:active, .wc-btn:active {
+    transform: scale(0.92) !important;
+  }
+
   .glass {
     background: var(--panel); backdrop-filter: blur(16px);
     border: 1px solid var(--border); border-radius: 16px;
@@ -37,6 +45,36 @@
   .btn-primary {
     background: linear-gradient(135deg, #4f46e5, #06b6d4);
     box-shadow: 0 4px 18px rgba(99, 102, 241, 0.35);
+  }
+
+  /* Flying Poop Animation */
+  @keyframes flyPoopAnim {
+    0% {
+      transform: translate(-50%, -50%) scale(0.1) rotate(0deg);
+      opacity: 0;
+    }
+    20% {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(2.5) rotate(180deg);
+    }
+    70% {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(4.5) rotate(540deg);
+    }
+    100% {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(7) rotate(900deg);
+    }
+  }
+
+  .poop-overlay {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    z-index: 9999;
+    font-size: 80px;
+    pointer-events: none;
+    animation: flyPoopAnim 1.3s cubic-bezier(0.25, 1, 0.5, 1) forwards;
   }
 
   /* Social Pulse Effects */
@@ -66,14 +104,14 @@
 
   /* PC Status Dots */
   .pc-dot {
-    width: 15px; height: 15px; border-radius: 4px;
-    cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center;
+    width: 16px; height: 16px; border-radius: 4px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
     font-size: 8px; font-weight: 800; color: #000;
   }
   .pc-free { background: #10b981; box-shadow: 0 0 6px rgba(16, 185, 129, 0.6); }
-  .pc-busy { background: #ef4444; box-shadow: 0 0 6px rgba(239, 68, 68, 0.5); color: #fff; opacity: 0.85; }
+  .pc-busy { background: #ef4444; box-shadow: 0 0 6px rgba(239, 68, 68, 0.7); color: #fff; }
   .pc-repair { background: #f59e0b; box-shadow: 0 0 6px rgba(245, 158, 11, 0.6); color: #000; }
-  .pc-selected { outline: 2px solid #fff; transform: scale(1.25); z-index: 10; box-shadow: 0 0 10px #fff; }
+  .pc-selected { outline: 2px solid #fff; transform: scale(1.3); z-index: 10; box-shadow: 0 0 12px #fff; }
 
   /* Tab Bar */
   .tabbar {
@@ -81,7 +119,7 @@
     width: calc(100% - 20px); max-width: 420px;
     background: rgba(10, 12, 22, 0.95); backdrop-filter: blur(20px);
     border: 1px solid var(--border); border-radius: 18px; padding: 4px;
-    display: flex; justify-content: space-around; z-index: 40;
+    display: flex; justify-around; z-index: 40;
   }
   .tab-btn {
     flex: 1; padding: 6px 0; display: flex; flex-direction: column; align-items: center;
@@ -95,17 +133,19 @@
 </head>
 <body class="max-w-md mx-auto p-3">
 
+  <!-- CONTAINER FOR FLYING POOP EASTER EGG -->
+  <div id="poop-container"></div>
+
   <!-- TOP TOAST NOTIFICATION -->
   <div id="toast-notification" class="fixed top-3 left-1/2 -translate-x-1/2 z-50 bg-emerald-600 text-white px-4 py-2.5 rounded-2xl shadow-2xl flex items-center gap-2 text-xs font-bold transition-all duration-300 transform -translate-y-16 opacity-0 pointer-events-none w-[90%] max-w-xs justify-center border border-emerald-400/40">
-    <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+    <i id="toast-icon" data-lucide="check-circle-2" class="w-4 h-4"></i>
     <span id="toast-text">Уведомление</span>
   </div>
 
-  <!-- USER LOGIN MODAL (SOLID BACKGROUND) -->
+  <!-- USER LOGIN MODAL -->
   <div id="login-modal" class="fixed inset-0 z-50 bg-[#060812] flex items-center justify-center p-4">
     <div class="glass w-full max-w-sm p-6 space-y-4 border-indigo-500/30 relative bg-[#0d1021]">
       
-      <!-- Secret Admin Button -->
       <button id="secret-admin-btn" class="absolute top-4 right-4 p-2 text-gray-500 hover:text-indigo-400 transition-colors">
         <i data-lucide="shield-lock" class="w-5 h-5"></i>
       </button>
@@ -140,7 +180,7 @@
           <input type="password" id="login-password" placeholder="••••••••" class="w-full bg-white/5 border border-white/10 rounded-xl p-2.5 text-sm text-white focus:outline-none focus:border-indigo-500">
         </div>
 
-        <button id="login-btn" class="w-full btn-primary py-3 rounded-xl font-bold text-white text-sm mt-2">Войти в клуб</button>
+        <button id="login-btn" onclick="playClickSound()" class="w-full btn-primary py-3 rounded-xl font-bold text-white text-sm mt-2">Войти в клуб</button>
       </div>
     </div>
   </div>
@@ -161,8 +201,8 @@
           <input type="password" id="admin-secret-input" placeholder="Код (7777)" class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-red-500 text-center font-bold tracking-widest">
         </div>
         <div class="flex gap-2">
-          <button id="admin-cancel-btn" class="flex-1 glass py-3 rounded-xl font-bold text-gray-400 text-xs">Отмена</button>
-          <button id="admin-login-submit" class="flex-1 bg-red-600 hover:bg-red-500 py-3 rounded-xl font-bold text-white text-xs">Войти</button>
+          <button id="admin-cancel-btn" onclick="playClickSound()" class="flex-1 glass py-3 rounded-xl font-bold text-gray-400 text-xs">Отмена</button>
+          <button id="admin-login-submit" onclick="playClickSound()" class="flex-1 bg-red-600 hover:bg-red-500 py-3 rounded-xl font-bold text-white text-xs">Войти</button>
         </div>
       </div>
     </div>
@@ -175,7 +215,7 @@
         <h3 class="font-title font-bold text-sm text-white flex items-center gap-2">
           <i data-lucide="bookmark" class="w-4 h-4 text-indigo-400"></i> Мои Бронирования
         </h3>
-        <button id="close-bookings-btn" class="text-gray-400 hover:text-white"><i data-lucide="x" class="w-4 h-4"></i></button>
+        <button id="close-bookings-btn" onclick="playClickSound()" class="text-gray-400 hover:text-white"><i data-lucide="x" class="w-4 h-4"></i></button>
       </div>
       <div id="bookings-list" class="space-y-2 max-h-60 overflow-y-auto pr-1">
         <p class="text-xs text-gray-400 text-center py-4">У вас пока нет активных броней</p>
@@ -199,11 +239,11 @@
 
     <!-- SOCIAL MEDIA BUTTONS -->
     <div class="flex items-center gap-2">
-      <a href="https://instagram.com/majorgc_fergana" target="_blank" title="Instagram"
+      <a href="https://instagram.com/majorgc_fergana" target="_blank" onclick="playClickSound()" title="Instagram"
          class="social-insta w-8 h-8 rounded-xl flex items-center justify-center text-white shadow-lg">
         <i data-lucide="instagram" class="w-4 h-4"></i>
       </a>
-      <a href="https://t.me/majorgc_Fergana" target="_blank" title="Telegram"
+      <a href="https://t.me/majorgc_Fergana" target="_blank" onclick="playClickSound()" title="Telegram"
          class="social-tg w-8 h-8 rounded-xl flex items-center justify-center text-white shadow-lg">
         <i data-lucide="send" class="w-4 h-4"></i>
       </a>
@@ -221,7 +261,7 @@
           <p class="font-bold text-xs text-white" id="user-display-name">@Alex_Major</p>
         </div>
         <div class="text-right">
-          <button id="open-bookings-btn" class="bg-indigo-600/30 border border-indigo-500/40 text-indigo-300 px-2.5 py-1 rounded-xl text-[10px] font-bold flex items-center gap-1 hover:bg-indigo-600/50">
+          <button id="open-bookings-btn" onclick="playClickSound()" class="bg-indigo-600/30 border border-indigo-500/40 text-indigo-300 px-2.5 py-1 rounded-xl text-[10px] font-bold flex items-center gap-1 hover:bg-indigo-600/50">
             <i data-lucide="bookmark" class="w-3 h-3"></i> Мои брони
           </button>
         </div>
@@ -239,31 +279,47 @@
       </div>
     </div>
 
-    <!-- PC PRICES BANNER ABOVE MAP -->
-    <div class="glass p-2.5 border-indigo-500/30 bg-gradient-to-r from-indigo-950/20 to-purple-950/20">
-      <div class="flex justify-between items-center mb-1.5">
-        <span class="text-[10px] font-bold text-gray-300 flex items-center gap-1">
-          <i data-lucide="tag" class="w-3 h-3 text-cyan-400"></i> Тарифы и стоимость
+    <!-- PC PRICES TABLE BANNER -->
+    <div class="glass p-3 border-indigo-500/40 bg-gradient-to-br from-indigo-950/30 via-purple-950/20 to-black">
+      <div class="flex justify-between items-center mb-2 pb-1.5 border-b border-white/10">
+        <span class="text-xs font-bold text-white flex items-center gap-1.5">
+          <i data-lucide="receipt" class="w-4 h-4 text-cyan-400"></i> ПРАЙС-ЛИСТ КЛУБА
         </span>
-        <span class="text-[9px] text-gray-400">Цены за 1ч / 3ч</span>
+        <span class="text-[9px] bg-cyan-500/20 text-cyan-300 px-2 py-0.5 rounded-full font-semibold">Тарифы</span>
       </div>
-      <div class="grid grid-cols-2 gap-1.5 text-[10px]">
-        <div class="bg-white/5 p-1.5 rounded-lg border border-white/5">
-          <p class="font-bold text-cyan-400">Main Zone</p>
-          <p class="text-gray-300 font-semibold">1ч — 15 тыс | 3ч — 30 тыс</p>
-        </div>
-        <div class="bg-white/5 p-1.5 rounded-lg border border-white/5">
-          <p class="font-bold text-indigo-400">VIP Zone</p>
-          <p class="text-gray-300 font-semibold">1ч — 20 тыс | 3ч — 50 тыс</p>
-        </div>
-        <div class="bg-white/5 p-1.5 rounded-lg border border-white/5">
-          <p class="font-bold text-emerald-400">PRO Zone</p>
-          <p class="text-gray-300 font-semibold">1ч — 25 тыс | 3ч — 60 тыс</p>
-        </div>
-        <div class="bg-purple-900/30 p-1.5 rounded-lg border border-purple-500/30">
-          <p class="font-bold text-purple-300">PS Zone (1 и 2)</p>
-          <p class="text-gray-200 font-semibold">1 час — 40,000 UZS</p>
-        </div>
+
+      <!-- PRICE TABLE GRID -->
+      <div class="overflow-hidden rounded-xl border border-white/10">
+        <table class="w-full text-left border-collapse text-[11px]">
+          <thead>
+            <tr class="bg-white/10 text-gray-300 font-bold border-b border-white/10">
+              <th class="p-2">Зона</th>
+              <th class="p-2 text-center">1 Час</th>
+              <th class="p-2 text-right">3 Часа</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-white/5 font-medium">
+            <tr class="hover:bg-white/5">
+              <td class="p-2 font-bold text-cyan-400 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span> Main Zone</td>
+              <td class="p-2 text-center text-gray-200">15,000 UZS</td>
+              <td class="p-2 text-right text-gray-200">30,000 UZS</td>
+            </tr>
+            <tr class="hover:bg-white/5">
+              <td class="p-2 font-bold text-indigo-400 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-indigo-400"></span> VIP Zone</td>
+              <td class="p-2 text-center text-gray-200">20,000 UZS</td>
+              <td class="p-2 text-right text-gray-200">50,000 UZS</td>
+            </tr>
+            <tr class="hover:bg-white/5">
+              <td class="p-2 font-bold text-emerald-400 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> PRO Zone</td>
+              <td class="p-2 text-center text-gray-200">25,000 UZS</td>
+              <td class="p-2 text-right text-gray-200">60,000 UZS</td>
+            </tr>
+            <tr class="bg-purple-950/40">
+              <td class="p-2 font-bold text-purple-300 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span> PS 1 и PS 2</td>
+              <td class="p-2 text-center text-purple-200 font-bold" colspan="2">40,000 UZS / час</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
 
@@ -282,10 +338,12 @@
       
       <!-- TOP ROW: WC + PRO 1 + PRO 2 -->
       <div class="grid grid-cols-3 gap-1.5">
-        <!-- TOILET WC TOP LEFT -->
-        <div class="border border-cyan-500/40 rounded-lg bg-cyan-950/30 p-1 flex items-center justify-center gap-1">
+        
+        <!-- CLICKABLE TOILET WC (EASTER EGG) -->
+        <div id="wc-btn" onclick="triggerWCEasterEgg()" 
+             class="wc-btn border border-cyan-500/40 rounded-lg bg-cyan-950/30 p-1 flex items-center justify-center gap-1 cursor-pointer hover:bg-cyan-900/50">
           <i data-lucide="toilet" class="w-3.5 h-3.5 text-cyan-400"></i>
-          <span class="text-[9px] font-extrabold text-cyan-300">WC</span>
+          <span class="text-[9px] font-extrabold text-cyan-300">WC 🚽</span>
         </div>
         
         <!-- PRO 1 -->
@@ -333,11 +391,11 @@
           </div>
         </div>
 
-        <!-- RIGHT: PS ROOM 2 -->
-        <div class="col-span-3 room-card border-purple-500/40 bg-purple-950/20 justify-between">
-          <div class="flex items-center gap-1">
-            <i data-lucide="gamepad" class="w-3 h-3 text-purple-400"></i>
+        <!-- RIGHT: PS ROOM 2 (IDENTICAL TO PS 1) -->
+        <div class="col-span-3 room-card border-purple-500/50 bg-purple-950/30 justify-between">
+          <div class="flex items-center justify-between">
             <span class="text-[8px] font-bold text-purple-300">PS 2</span>
+            <i data-lucide="gamepad" class="w-3 h-3 text-purple-400"></i>
           </div>
           <div class="flex justify-around pt-1" id="zone-ps2"></div>
         </div>
@@ -363,13 +421,13 @@
           <span class="text-[8px] bg-amber-500/20 text-amber-300 px-1 py-0.5 rounded font-bold">24/7</span>
         </div>
 
-        <!-- PS ROOM 1 (RIGHT OF BAR - IDENTICAL TO PS 2) -->
-        <div class="col-span-4 room-card border-purple-500/40 bg-purple-950/20 justify-between">
+        <!-- PS ROOM 1 (RIGHT OF BAR - 100% IDENTICAL TO PS 2) -->
+        <div class="col-span-4 room-card border-purple-500/50 bg-purple-950/30 justify-between">
           <div class="flex items-center justify-between">
             <span class="text-[8px] font-bold text-purple-300">PS 1</span>
             <i data-lucide="gamepad" class="w-3 h-3 text-purple-400"></i>
           </div>
-          <div class="flex justify-around pt-0.5" id="zone-ps1"></div>
+          <div class="flex justify-around pt-1" id="zone-ps1"></div>
         </div>
       </div>
 
@@ -398,7 +456,7 @@
         <div class="relative">
           <img id="profile-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80" 
                alt="Avatar" class="w-14 h-14 rounded-full object-cover border-2 border-indigo-500">
-          <button id="change-avatar-btn" class="absolute -bottom-1 -right-1 bg-indigo-600 p-1.5 rounded-full text-white border border-black shadow-lg">
+          <button id="change-avatar-btn" onclick="playClickSound()" class="absolute -bottom-1 -right-1 bg-indigo-600 p-1.5 rounded-full text-white border border-black shadow-lg">
             <i data-lucide="camera" class="w-3 h-3"></i>
           </button>
           <input type="file" id="avatar-file-input" accept="image/*" class="hidden">
@@ -435,26 +493,26 @@
       <div class="space-y-1.5 pt-1 border-t border-white/10">
         <p class="text-xs font-semibold text-gray-400 mb-1">Полезное и настройки ПК</p>
         
-        <button onclick="alert('Характеристики ПК:\n- Видеокарта: RTX 4070 12GB\n- Процессор: Core i7 13700K\n- Мониторы: ASUS ROG 240Hz\n- Наушники: HyperX Cloud II')" 
+        <button onclick="playClickSound(); alert('Характеристики ПК:\n- Видеокарта: RTX 4070 12GB\n- Процессор: Core i7 13700K\n- Мониторы: ASUS ROG 240Hz\n- Наушники: HyperX Cloud II')" 
                 class="w-full glass p-2.5 flex justify-between items-center text-xs text-gray-200">
           <span class="flex items-center gap-2"><i data-lucide="cpu" class="w-4 h-4 text-cyan-400"></i> Характеристики железа ПК</span>
           <i data-lucide="chevron-right" class="w-4 h-4 text-gray-500"></i>
         </button>
 
-        <button onclick="alert('Меню Бара скоро появится в приложении! Закажите у администратора.')" 
+        <button onclick="playClickSound(); alert('Меню Бара скоро появится в приложении! Закажите у администратора.')" 
                 class="w-full glass p-2.5 flex justify-between items-center text-xs text-gray-200">
           <span class="flex items-center gap-2"><i data-lucide="utensils" class="w-4 h-4 text-amber-400"></i> Экспресс-заказ из Бара</span>
           <i data-lucide="chevron-right" class="w-4 h-4 text-gray-500"></i>
         </button>
 
-        <button onclick="alert('Ваш уровень: MAJOR GOLD 🎖️\nКэшбэк на баланс: 5%')" 
+        <button onclick="playClickSound(); alert('Ваш уровень: MAJOR GOLD 🎖️\nКэшбэк на баланс: 5%')" 
                 class="w-full glass p-2.5 flex justify-between items-center text-xs text-gray-200">
           <span class="flex items-center gap-2"><i data-lucide="award" class="w-4 h-4 text-emerald-400"></i> VIP Уровень & Кэшбэк</span>
           <i data-lucide="chevron-right" class="w-4 h-4 text-gray-500"></i>
         </button>
       </div>
 
-      <button id="logout-btn" class="w-full bg-red-500/10 border border-red-500/20 text-red-400 py-2.5 rounded-xl text-xs font-bold mt-2">
+      <button id="logout-btn" onclick="playClickSound()" class="w-full bg-red-500/10 border border-red-500/20 text-red-400 py-2.5 rounded-xl text-xs font-bold mt-2">
         Сменить аккаунт / Выйти
       </button>
     </div>
@@ -474,25 +532,25 @@
       </div>
 
       <div class="space-y-1.5">
-        <a href="https://t.me/dihhari?text=Привет!%20Можете%20ли%20вы%20поменять%20мне%20пароль%20от%20ПК?" target="_blank" 
+        <a href="https://t.me/dihhari?text=Привет!%20Можете%20ли%20вы%20поменять%20мне%20пароль%20от%20ПК?" target="_blank" onclick="playClickSound()"
            class="glass p-2.5 flex justify-between items-center text-xs font-medium text-gray-200">
           <span>🔑 Поменять пароль от ПК</span>
           <i data-lucide="chevron-right" class="w-4 h-4 text-indigo-400"></i>
         </a>
 
-        <a href="https://t.me/dihhari?text=Привет!%20Хочу%20изменить%20привязанный%20номер%20телефона." target="_blank" 
+        <a href="https://t.me/dihhari?text=Привет!%20Хочу%20изменить%20привязанный%20номер%20телефона." target="_blank" onclick="playClickSound()"
            class="glass p-2.5 flex justify-between items-center text-xs font-medium text-gray-200">
           <span>📱 Сменить номер телефона</span>
           <i data-lucide="chevron-right" class="w-4 h-4 text-cyan-400"></i>
         </a>
 
-        <a href="https://t.me/dihhari?text=Привет!%20У%20меня%20вопрос%20по%20пополнению%20баланса." target="_blank" 
+        <a href="https://t.me/dihhari?text=Привет!%20У%20меня%20вопрос%20по%20пополнению%20баланса." target="_blank" onclick="playClickSound()"
            class="glass p-2.5 flex justify-between items-center text-xs font-medium text-gray-200">
           <span>💳 Вопрос по балансу</span>
           <i data-lucide="chevron-right" class="w-4 h-4 text-emerald-400"></i>
         </a>
 
-        <a href="https://t.me/dihhari?text=Привет!%20Не%20работает%20ПК%20или%20периферия." target="_blank" 
+        <a href="https://t.me/dihhari?text=Привет!%20Не%20работает%20ПК%20или%20периферия." target="_blank" onclick="playClickSound()"
            class="glass p-2.5 flex justify-between items-center text-xs font-medium text-gray-200">
           <span>🖥️ Проблема с ПК / Наушниками</span>
           <i data-lucide="chevron-right" class="w-4 h-4 text-red-400"></i>
@@ -535,7 +593,7 @@
         <p class="text-xs text-gray-400 font-semibold">Пополнить баланс гостю</p>
         <div class="flex gap-2">
           <input type="number" placeholder="Сумма UZS" id="admin-topup-amount" class="flex-1 bg-white/5 border border-white/10 rounded-xl px-3 text-xs text-white">
-          <button id="admin-topup-btn" class="bg-emerald-600 hover:bg-emerald-500 px-4 py-2 rounded-xl text-xs font-bold text-white">Пополнить</button>
+          <button id="admin-topup-btn" onclick="playClickSound()" class="bg-emerald-600 hover:bg-emerald-500 px-4 py-2 rounded-xl text-xs font-bold text-white">Пополнить</button>
         </div>
       </div>
     </div>
@@ -543,15 +601,15 @@
 
   <!-- TAB BAR -->
   <div class="tabbar">
-    <div class="tab-btn active" data-tab="home">
+    <div class="tab-btn active" data-tab="home" onclick="playClickSound()">
       <i data-lucide="map" class="w-4 h-4"></i>
       <span>Карта</span>
     </div>
-    <div class="tab-btn" data-tab="profile">
+    <div class="tab-btn" data-tab="profile" onclick="playClickSound()">
       <i data-lucide="user" class="w-4 h-4"></i>
       <span>Профиль</span>
     </div>
-    <div class="tab-btn" data-tab="help" id="dynamic-tab">
+    <div class="tab-btn" data-tab="help" id="dynamic-tab" onclick="playClickSound()">
       <i data-lucide="headphones" class="w-4 h-4" id="dynamic-tab-icon"></i>
       <span id="dynamic-tab-label">Помощь</span>
     </div>
@@ -560,14 +618,135 @@
 <script>
   lucide.createIcons();
 
+  // AUDIO SYSTEM VIA WEB AUDIO API (NO EXTERNAL FILES REQUIRED)
+  let audioCtx = null;
+  function getAudioContext() {
+    if(!audioCtx) {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if(audioCtx.state === 'suspended') {
+      audioCtx.resume();
+    }
+    return audioCtx;
+  }
+
+  // 1. Click Sound Effect
+  function playClickSound() {
+    try {
+      const ctx = getAudioContext();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(600, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(200, ctx.currentTime + 0.05);
+      gain.gain.setValueAtTime(0.12, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.05);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.05);
+    } catch(e) {}
+  }
+
+  // 2. Error / Booked Warning Sound Effect
+  function playErrorSound() {
+    try {
+      const ctx = getAudioContext();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(150, ctx.currentTime);
+      osc.frequency.setValueAtTime(100, ctx.currentTime + 0.1);
+      gain.gain.setValueAtTime(0.2, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.25);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.25);
+    } catch(e) {}
+  }
+
+  // 3. Success Sound
+  function playSuccessSound() {
+    try {
+      const ctx = getAudioContext();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(440, ctx.currentTime);
+      osc.frequency.setValueAtTime(880, ctx.currentTime + 0.1);
+      gain.gain.setValueAtTime(0.2, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.3);
+    } catch(e) {}
+  }
+
+  // 4. Synthesized Fart Sound for WC Easter Egg
+  function playFartSound() {
+    try {
+      const ctx = getAudioContext();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sawtooth';
+
+      const now = ctx.currentTime;
+      osc.frequency.setValueAtTime(130, now);
+      osc.frequency.exponentialRampToValueAtTime(35, now + 0.5);
+
+      // Pitch wobble (LFO)
+      const lfo = ctx.createOscillator();
+      lfo.frequency.value = 30;
+      const lfoGain = ctx.createGain();
+      lfoGain.gain.value = 40;
+      lfo.connect(osc.frequency);
+      lfo.start(now);
+      lfo.stop(now + 0.5);
+
+      gain.gain.setValueAtTime(0.4, now);
+      gain.gain.linearRampToValueAtTime(0.01, now + 0.5);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.5);
+    } catch(e) {}
+  }
+
+  // WC EASTER EGG ACTION (FLYING POOP)
+  function triggerWCEasterEgg() {
+    playFartSound();
+    const container = document.getElementById('poop-container');
+    const poop = document.createElement('div');
+    poop.className = 'poop-overlay';
+    poop.innerText = '💩';
+    container.appendChild(poop);
+
+    setTimeout(() => {
+      poop.remove();
+    }, 1300);
+  }
+
   const ADMIN_SECRET_CODE = '7777';
   let isAdmin = false;
   let myBookings = JSON.parse(localStorage.getItem('major_my_bookings') || '[]');
 
   // TOAST NOTIFICATION SYSTEM
-  function showToast(msg) {
+  function showToast(msg, type = 'success') {
     const toast = document.getElementById('toast-notification');
-    document.getElementById('toast-text').innerText = msg;
+    const toastText = document.getElementById('toast-text');
+    
+    toastText.innerText = msg;
+    
+    if (type === 'error') {
+      toast.className = toast.className.replace(/bg-\w+-600/, 'bg-red-600').replace(/border-\w+-400\/40/, 'border-red-400/40');
+      playErrorSound();
+    } else {
+      toast.className = toast.className.replace(/bg-\w+-600/, 'bg-emerald-600').replace(/border-\w+-400\/40/, 'border-emerald-400/40');
+    }
+
     toast.classList.remove('-translate-y-16', 'opacity-0', 'pointer-events-none');
     toast.classList.add('translate-y-0', 'opacity-100');
     setTimeout(() => {
@@ -642,6 +821,7 @@
     // Save session
     localStorage.setItem('major_user_session', JSON.stringify({ nick: fullNick, phone: fullPhone, isAdmin: false }));
     document.getElementById('login-modal').classList.add('hidden');
+    playSuccessSound();
   };
 
   // Admin Login
@@ -656,8 +836,9 @@
       document.getElementById('admin-auth-modal').classList.add('hidden');
       document.getElementById('login-modal').classList.add('hidden');
       showToast('Режим администратора активирован');
+      playSuccessSound();
     } else {
-      alert('Неверный код доступа!');
+      showToast('Неверный код доступа!', 'error');
     }
   };
 
@@ -718,7 +899,6 @@
     ps1: generateZone('PS Lounge 1', 2, 'PS')
   };
 
-  // LOCAL STORAGE REALTIME SYNC
   function saveState() {
     localStorage.setItem('major_pc_state', JSON.stringify(pcData));
   }
@@ -760,13 +940,16 @@
     renderAdminPanel();
   }
 
+  // FIXED PC SELECTION AND BOOKED WARNING BUG
   function selectPC(pc) {
+    playClickSound();
+    
     if(pc.status === 'busy') {
-      showToast(`${pc.label} сейчас занят!`);
+      showToast(`⚠️ Этот ${pc.label} уже забронирован!`, 'error');
       return;
     }
     if(pc.status === 'repair') {
-      showToast(`${pc.label} находится на ремонте!`);
+      showToast(`⚠️ ${pc.label} находится на ремонте!`, 'error');
       return;
     }
     selectedPc = pc;
@@ -791,6 +974,7 @@
 
       saveState();
       renderMap();
+      playSuccessSound();
       showToast(`Ваш ${selectedPc.label} забронирован на 1 час!`);
       document.getElementById('booking-card').classList.add('hidden');
       selectedPc = null;
@@ -813,6 +997,7 @@
       }`;
       btn.innerText = pc.label;
       btn.onclick = () => {
+        playClickSound();
         pc.status = pc.status === 'free' ? 'busy' : (pc.status === 'busy' ? 'repair' : 'free');
         saveState();
         renderMap();
@@ -822,7 +1007,7 @@
     document.getElementById('admin-busy-count').innerText = `${busyCount} / ${pcData.length}`;
   }
 
-  // Navigation
+  // Navigation Tabs
   document.querySelectorAll('.tab-btn').forEach(tab => {
     tab.addEventListener('click', () => {
       document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
@@ -840,6 +1025,7 @@
     if(val > 0) {
       document.getElementById('user-balance').innerText = `${val.toLocaleString()} UZS`;
       showToast(`Баланс пополнен на ${val.toLocaleString()} UZS`);
+      playSuccessSound();
       input.value = '';
     }
   };
