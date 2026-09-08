@@ -12,45 +12,45 @@
 
 <style>
   :root {
-    --bg:#080b14;
-    --panel:rgba(255,255,255,0.04);
-    --border:rgba(255,255,255,0.08);
-    --primary:#6366f1;
-    --cyan:#06b6d4;
-    --green:#10b981;
-    --red:#ef4444;
-    --yellow:#f59e0b;
+    --bg: #070913;
+    --panel: rgba(255, 255, 255, 0.04);
+    --border: rgba(255, 255, 255, 0.08);
+    --primary: #6366f1;
+    --cyan: #06b6d4;
+    --green: #10b981;
+    --red: #ef4444;
+    --amber: #f59e0b;
   }
-  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   body {
-    margin:0; background:var(--bg); color:#f3f4f6;
-    font-family:'Inter', sans-serif; min-height:100vh; padding-bottom:90px;
+    margin: 0; background: var(--bg); color: #f3f4f6;
+    font-family: 'Inter', sans-serif; min-height: 100vh; padding-bottom: 90px;
   }
-  .font-title { font-family:'Space Grotesk', sans-serif; }
+  .font-title { font-family: 'Space Grotesk', sans-serif; }
 
   .glass {
-    background:var(--panel); backdrop-filter:blur(16px);
-    border:1px solid var(--border); border-radius:18px;
+    background: var(--panel); backdrop-filter: blur(16px);
+    border: 1px solid var(--border); border-radius: 18px;
   }
 
   .btn-primary {
-    background:linear-gradient(135deg, #4f46e5, #06b6d4);
-    box-shadow: 0 4px 20px rgba(99,102,241,0.35);
+    background: linear-gradient(135deg, #4f46e5, #06b6d4);
+    box-shadow: 0 4px 20px rgba(99, 102, 241, 0.35);
   }
 
-  /* 2D Flat Map Styling */
+  /* Map Layout */
   .map-grid {
     display: grid;
     grid-template-columns: 85px 1fr;
-    grid-template-rows: 75px 1fr 60px;
+    grid-template-rows: 65px 1fr 70px;
     gap: 8px; width: 100%; aspect-ratio: 4/5;
-    background: #04060d; padding: 10px; border-radius: 20px;
-    border: 1px solid rgba(255,255,255,0.1); position: relative;
+    background: #03050c; padding: 10px; border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1); position: relative;
   }
 
   .room-box {
-    border: 1px solid rgba(255,255,255,0.12); border-radius: 10px;
-    background: rgba(255,255,255,0.02); padding: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 10px;
+    background: rgba(255, 255, 255, 0.02); padding: 4px;
     display: flex; flex-direction: column; justify-content: space-between;
   }
 
@@ -59,11 +59,9 @@
     cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center;
     font-size: 8px; font-weight: bold; color: #000;
   }
-  .pc-free { background: var(--green); box-shadow: 0 0 8px rgba(16,185,129,0.5); }
-  .pc-busy { background: var(--red); box-shadow: 0 0 8px rgba(239,68,68,0.4); opacity: 0.8; }
-  .pc-hold { background: var(--yellow); }
-  .pc-off  { background: #4b5563; }
-  .pc-selected { outline: 2px solid #fff; transform: scale(1.2); z-index: 10; }
+  .pc-free { background: var(--green); box-shadow: 0 0 8px rgba(16, 185, 129, 0.5); }
+  .pc-busy { background: var(--red); box-shadow: 0 0 8px rgba(239, 68, 68, 0.4); opacity: 0.8; }
+  .pc-selected { outline: 2px solid #fff; transform: scale(1.25); z-index: 10; }
 
   /* Tab Bar */
   .tabbar {
@@ -77,7 +75,7 @@
     flex: 1; padding: 8px 0; display: flex; flex-direction: column; align-items: center;
     gap: 3px; color: #9ca3af; font-size: 11px; font-weight: 600; border-radius: 14px; cursor: pointer;
   }
-  .tab-btn.active { color: #fff; background: rgba(255,255,255,0.08); }
+  .tab-btn.active { color: #fff; background: rgba(255, 255, 255, 0.08); }
 
   .view { display: none; }
   .view.active { display: block; }
@@ -85,13 +83,51 @@
 </head>
 <body class="max-w-md mx-auto p-4">
 
+  <!-- LOGIN MODAL (AUTH) -->
+  <div id="login-modal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="glass w-full max-w-sm p-6 space-y-4 border-indigo-500/30">
+      <div class="text-center space-y-1">
+        <div class="w-12 h-12 rounded-2xl btn-primary mx-auto flex items-center justify-center mb-2">
+          <i data-lucide="gamepad-2" class="w-6 h-6 text-white"></i>
+        </div>
+        <h2 class="font-title text-2xl font-bold text-white">MAJOR Cyber Club</h2>
+        <p class="text-xs text-gray-400">Введите данные Вашего ПК аккаунта</p>
+      </div>
+
+      <div class="space-y-3 pt-2">
+        <div>
+          <label class="text-xs text-gray-400 block mb-1">Никнейм (Username)</label>
+          <input type="text" id="login-username" placeholder="например: Alex_Major" class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-indigo-500">
+        </div>
+        <div>
+          <label class="text-xs text-gray-400 block mb-1">Номер телефона</label>
+          <input type="tel" id="login-phone" placeholder="+998 90 123 45 67" class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-indigo-500">
+        </div>
+        <div>
+          <label class="text-xs text-gray-400 block mb-1">Пароль от ПК</label>
+          <input type="password" id="login-password" placeholder="••••••••" class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-indigo-500">
+          <p class="text-[10px] text-gray-500 mt-1">Для входа в админку пароль: <code class="text-indigo-400">admin</code></p>
+        </div>
+
+        <button id="login-btn" class="w-full btn-primary py-3 rounded-xl font-bold text-white text-sm mt-2">Войти в клуб</button>
+      </div>
+    </div>
+  </div>
+
   <!-- HEADER -->
   <div class="flex justify-between items-center mb-5">
-    <div>
-      <p class="text-[12px] text-gray-400 uppercase tracking-widest font-semibold">Cyber Club</p>
-      <h1 class="font-title text-2xl font-bold tracking-tight text-white">Welcome to Major</h1>
+    <div class="flex items-center gap-3">
+      <div class="relative">
+        <img id="header-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80" 
+             alt="Avatar" class="w-12 h-12 rounded-full object-cover border-2 border-indigo-500/60 p-0.5 shadow-lg">
+        <span class="w-3 h-3 bg-emerald-500 border-2 border-[#070913] rounded-full absolute bottom-0 right-0"></span>
+      </div>
+      <div>
+        <p class="text-[11px] text-gray-400 uppercase tracking-widest font-semibold">Cyber Club</p>
+        <h1 class="font-title text-xl font-bold tracking-tight text-white">Welcome to Major</h1>
+      </div>
     </div>
-    <div class="w-10 h-10 rounded-full glass flex items-center justify-center border border-indigo-500/30">
+    <div class="w-10 h-10 rounded-2xl glass flex items-center justify-center border border-indigo-500/30">
       <i data-lucide="shield" class="w-5 h-5 text-indigo-400"></i>
     </div>
   </div>
@@ -118,15 +154,15 @@
           <p class="font-title text-xl font-bold text-emerald-400" id="user-balance">150,000 UZS</p>
         </div>
         <div>
-          <p class="text-xs text-gray-400">Последнее посещение</p>
-          <p class="text-xs font-medium text-gray-200 mt-1">Вчера, 18:30 (3 ч.)</p>
+          <p class="text-xs text-gray-400">Пароль аккаунта</p>
+          <p class="text-xs font-mono text-gray-300 mt-1">••••••••</p>
         </div>
       </div>
     </div>
 
     <!-- MAP HEADER -->
-    <div class="flex justify-between items-center pt-2">
-      <h2 class="font-title text-base font-bold text-gray-200">Интерактивная карта зала (Вид сверху)</h2>
+    <div class="flex justify-between items-center pt-1">
+      <h2 class="font-title text-base font-bold text-gray-200">Карта клуба (Вид сверху)</h2>
       <div class="flex gap-2 text-[10px]">
         <span class="flex items-center gap-1"><i class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></i> Своб</span>
         <span class="flex items-center gap-1"><i class="w-2 h-2 rounded-full bg-red-500 inline-block"></i> Зан</span>
@@ -135,13 +171,8 @@
 
     <!-- TOP-DOWN 2D MAP LAYOUT -->
     <div class="map-grid">
-      
-      <!-- TOP ROW: VIP 5 | PRO 1 | PRO 2 -->
-      <div class="col-span-2 grid grid-cols-3 gap-2">
-        <div class="room-box">
-          <span class="text-[9px] font-bold text-indigo-400">VIP 5</span>
-          <div class="flex justify-between" id="zone-vip5"></div>
-        </div>
+      <!-- TOP ROW: PRO 1 | PRO 2 (VIP 5 Removed) -->
+      <div class="col-span-2 grid grid-cols-2 gap-2">
         <div class="room-box">
           <span class="text-[9px] font-bold text-cyan-400">PRO 1</span>
           <div class="flex justify-between" id="zone-pro1"></div>
@@ -152,29 +183,34 @@
         </div>
       </div>
 
-      <!-- LEFT COLUMN: VIP 1, 2, 3, 4 -->
-      <div class="flex flex-col gap-2">
+      <!-- LEFT COLUMN: VIP 1, 2, 3, 4 + TOILET -->
+      <div class="flex flex-col gap-1.5">
         <div class="room-box flex-1">
-          <span class="text-[9px] font-bold text-indigo-400">VIP 4</span>
-          <div class="grid grid-cols-2 gap-1 mt-1" id="zone-vip4"></div>
+          <span class="text-[8px] font-bold text-indigo-400">VIP 4</span>
+          <div class="grid grid-cols-2 gap-0.5" id="zone-vip4"></div>
         </div>
         <div class="room-box flex-1">
-          <span class="text-[9px] font-bold text-indigo-400">VIP 3</span>
-          <div class="grid grid-cols-2 gap-1 mt-1" id="zone-vip3"></div>
+          <span class="text-[8px] font-bold text-indigo-400">VIP 3</span>
+          <div class="grid grid-cols-2 gap-0.5" id="zone-vip3"></div>
         </div>
         <div class="room-box flex-1">
-          <span class="text-[9px] font-bold text-indigo-400">VIP 2</span>
-          <div class="grid grid-cols-2 gap-1 mt-1" id="zone-vip2"></div>
+          <span class="text-[8px] font-bold text-indigo-400">VIP 2</span>
+          <div class="grid grid-cols-2 gap-0.5" id="zone-vip2"></div>
         </div>
         <div class="room-box flex-1">
-          <span class="text-[9px] font-bold text-indigo-400">VIP 1</span>
-          <div class="grid grid-cols-2 gap-1 mt-1" id="zone-vip1"></div>
+          <span class="text-[8px] font-bold text-indigo-400">VIP 1</span>
+          <div class="grid grid-cols-2 gap-0.5" id="zone-vip1"></div>
+        </div>
+        <!-- TOILET / WC -->
+        <div class="border border-cyan-500/30 rounded-lg bg-cyan-950/20 p-1 flex items-center justify-center gap-1">
+          <i data-lucide="bath" class="w-3.5 h-3.5 text-cyan-400"></i>
+          <span class="text-[9px] font-bold text-cyan-300">WC</span>
         </div>
       </div>
 
-      <!-- CENTER: MAIN HALL (4 ROWS) -->
+      <!-- CENTER: MAIN HALL -->
       <div class="room-box justify-around p-2 bg-indigo-950/20 border-indigo-500/20">
-        <span class="text-[10px] font-bold text-gray-400 text-center block mb-1">ОСНОВНОЙ ЗАЛ (STANDARD)</span>
+        <span class="text-[10px] font-bold text-gray-400 text-center block mb-1">ОСНОВНОЙ ЗАЛ</span>
         <div class="space-y-3">
           <div class="flex justify-around" id="row-4"></div>
           <div class="flex justify-around" id="row-3"></div>
@@ -183,14 +219,22 @@
         </div>
       </div>
 
-      <!-- BOTTOM RIGHT: RECEPTION / ENTRANCE -->
-      <div class="col-start-2 border border-white/10 rounded-xl bg-gray-900/60 flex items-center justify-center">
-        <span class="text-xs font-bold tracking-wider text-gray-400 uppercase">Ресепшен / Вход</span>
+      <!-- BOTTOM RIGHT: BAR / RECEPTION -->
+      <div class="col-start-2 border border-amber-500/40 rounded-xl bg-gradient-to-r from-amber-950/40 to-amber-900/20 p-2 flex items-center justify-between shadow-lg shadow-amber-500/5">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-amber-500/20 flex items-center justify-center border border-amber-500/40">
+            <i data-lucide="cup-soda" class="w-4 h-4 text-amber-400"></i>
+          </div>
+          <div>
+            <p class="text-xs font-bold text-amber-300">BAR & BARISTA</p>
+            <p class="text-[9px] text-amber-200/60">Ресепшен / Вход</p>
+          </div>
+        </div>
+        <span class="text-[9px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full font-bold">24/7</span>
       </div>
-
     </div>
 
-    <!-- SELECTED PC DRAWER -->
+    <!-- SELECTED PC CARD -->
     <div id="booking-card" class="glass p-4 hidden border-indigo-500/50">
       <div class="flex justify-between items-center">
         <div>
@@ -206,51 +250,95 @@
   <!-- VIEW: PROFILE -->
   <div id="view-profile" class="view space-y-4">
     <div class="glass p-5 space-y-4">
-      <h2 class="font-title font-bold text-lg text-white">Профиль и Настройки</h2>
+      <h2 class="font-title font-bold text-lg text-white">Профиль и Аккаунт</h2>
       
-      <div class="space-y-3">
+      <div class="flex items-center gap-4 p-3 bg-white/5 rounded-2xl border border-white/10">
+        <img id="profile-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80" 
+             alt="Avatar" class="w-14 h-14 rounded-full object-cover border-2 border-indigo-500">
         <div>
-          <label class="text-xs text-gray-400 block mb-1">Никнейм</label>
-          <input type="text" value="Alex_Major" id="input-nick" class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-indigo-500">
-        </div>
-
-        <div>
-          <label class="text-xs text-gray-400 block mb-1">Номер телефона</label>
-          <input type="text" value="+998 90 123 45 67" id="input-phone" class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-indigo-500">
-        </div>
-
-        <div class="pt-2">
-          <button class="w-full glass p-3 text-left flex justify-between items-center text-sm font-semibold text-gray-200 rounded-xl">
-            <span>Безопасность (Сменить пароль)</span>
-            <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
-          </button>
+          <p class="font-bold text-white text-base" id="profile-nick-display">Alex_Major</p>
+          <p class="text-xs text-indigo-300" id="profile-phone-display">+998 90 123 45 67</p>
         </div>
       </div>
 
-      <div class="pt-4 border-t border-white/10">
-        <a href="https://t.me/admin" target="_blank" class="w-full btn-primary p-3.5 rounded-xl flex items-center justify-center gap-2 text-sm font-bold text-white">
-          <i data-lucide="headphones" class="w-4 h-4"></i>
-          <span>Помощь / Поддержка Admin</span>
+      <p class="text-xs text-gray-400 font-semibold pt-2">Управление аккаунтом</p>
+
+      <!-- SEPARATE HELP CATEGORIES REDIRECTING TO @DIhari -->
+      <div class="space-y-2">
+        <a href="https://t.me/DIhari?text=Привет!%20Хочу%20поменять%20пароль%20от%20ПК" target="_blank" 
+           class="glass p-3.5 flex justify-between items-center text-xs font-medium text-gray-200 hover:border-indigo-500/50">
+          <div class="flex items-center gap-2.5">
+            <i data-lucide="key" class="w-4 h-4 text-indigo-400"></i>
+            <span>Поменять пароль в ПК клубе</span>
+          </div>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-gray-500"></i>
+        </a>
+
+        <a href="https://t.me/DIhari?text=Привет!%20Хочу%20поменять%20номер%20телефона" target="_blank" 
+           class="glass p-3.5 flex justify-between items-center text-xs font-medium text-gray-200 hover:border-indigo-500/50">
+          <div class="flex items-center gap-2.5">
+            <i data-lucide="smartphone" class="w-4 h-4 text-cyan-400"></i>
+            <span>Поменять номер телефона</span>
+          </div>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-gray-500"></i>
+        </a>
+
+        <a href="https://t.me/DIhari?text=Привет!%20Вопрос%20по%20пополнению%20баланса" target="_blank" 
+           class="glass p-3.5 flex justify-between items-center text-xs font-medium text-gray-200 hover:border-indigo-500/50">
+          <div class="flex items-center gap-2.5">
+            <i data-lucide="wallet" class="w-4 h-4 text-emerald-400"></i>
+            <span>Проблема или вопрос по балансу</span>
+          </div>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-gray-500"></i>
         </a>
       </div>
+
+      <button id="logout-btn" class="w-full bg-red-500/10 border border-red-500/20 text-red-400 py-3 rounded-xl text-xs font-bold mt-4">
+        Сменить аккаунт / Выйти
+      </button>
     </div>
   </div>
 
-  <!-- VIEW: ADMIN PANEL -->
+  <!-- VIEW: USER HELP / SUPPORT -->
+  <div id="view-help" class="view space-y-4">
+    <div class="glass p-5 space-y-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-indigo-500/20 flex items-center justify-center">
+          <i data-lucide="headphones" class="w-5 h-5 text-indigo-400"></i>
+        </div>
+        <div>
+          <h2 class="font-title font-bold text-lg text-white">Поддержка Admin</h2>
+          <p class="text-xs text-gray-400">Связь с администратором клуба</p>
+        </div>
+      </div>
+
+      <div class="bg-indigo-950/30 border border-indigo-500/20 p-4 rounded-xl space-y-2">
+        <p class="text-xs text-indigo-200 leading-relaxed">
+          Возникли вопросы по ПК, бронированию или пополнению баланса? Наш администратор ответит вам напрямую в Telegram.
+        </p>
+      </div>
+
+      <a href="https://t.me/DIhari" target="_blank" class="w-full btn-primary p-4 rounded-xl flex items-center justify-center gap-2 text-sm font-bold text-white shadow-lg">
+        <i data-lucide="message-square" class="w-4 h-4"></i>
+        <span>Написать админу @DIhari</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- VIEW: ADMIN PANEL (ADMIN ONLY) -->
   <div id="view-admin" class="view space-y-4">
     <div class="glass p-5 space-y-4 border-red-500/30">
       <div class="flex justify-between items-center">
         <h2 class="font-title font-bold text-lg text-red-400 flex items-center gap-2">
-          <i data-lucide="shield-alert" class="w-5 h-5"></i> Админ-Панель
+          <i data-lucide="shield-alert" class="w-5 h-5"></i> Панель Администратора
         </h2>
-        <span class="text-[10px] bg-red-500/20 text-red-300 px-2 py-0.5 rounded-full font-bold">Управление</span>
+        <span class="text-[10px] bg-red-500/20 text-red-300 px-2 py-0.5 rounded-full font-bold">ADMIN ONLY</span>
       </div>
 
-      <!-- Quick Stats -->
       <div class="grid grid-cols-2 gap-2 text-center">
         <div class="bg-white/5 p-3 rounded-xl">
           <p class="text-xs text-gray-400">Занято ПК</p>
-          <p class="font-title text-lg font-bold text-white" id="admin-busy-count">12 / 55</p>
+          <p class="font-title text-lg font-bold text-white" id="admin-busy-count">0 / 50</p>
         </div>
         <div class="bg-white/5 p-3 rounded-xl">
           <p class="text-xs text-gray-400">Касса за смену</p>
@@ -258,18 +346,15 @@
         </div>
       </div>
 
-      <!-- Admin Control Instructions -->
       <div class="bg-indigo-500/10 border border-indigo-500/20 p-3 rounded-xl text-xs text-indigo-200">
-        💡 <b>Как менять статус ПК:</b> Нажмите на компьютер ниже, чтобы переключить его состояние (Свободен ➔ Занят ➔ Обслуживание).
+        💡 Нажмите на компьютер ниже, чтобы переключить статус (Свободен ➔ Занят ➔ Выключен).
       </div>
 
-      <!-- Interactive Mini List for Fast Admin Toggle -->
       <div>
-        <p class="text-xs text-gray-400 mb-2 font-semibold">Быстрый селектор ПК</p>
+        <p class="text-xs text-gray-400 mb-2 font-semibold">Управление ПК залом</p>
         <div id="admin-pc-list" class="grid grid-cols-5 gap-2 max-h-60 overflow-y-auto pr-1"></div>
       </div>
 
-      <!-- Top Up Balance Tool -->
       <div class="pt-3 border-t border-white/10 space-y-2">
         <p class="text-xs text-gray-400 font-semibold">Пополнить баланс гостю</p>
         <div class="flex gap-2">
@@ -284,33 +369,64 @@
   <div class="tabbar">
     <div class="tab-btn active" data-tab="home">
       <i data-lucide="map" class="w-5 h-5"></i>
-      <span>Карта Зала</span>
+      <span>Карта</span>
     </div>
     <div class="tab-btn" data-tab="profile">
       <i data-lucide="user" class="w-5 h-5"></i>
       <span>Профиль</span>
     </div>
-    <div class="tab-btn" data-tab="admin">
-      <i data-lucide="sliders" class="w-5 h-5"></i>
-      <span>Админка</span>
+    <!-- Dynamically switched between Help and Admin -->
+    <div class="tab-btn" data-tab="help" id="dynamic-tab">
+      <i data-lucide="headphones" class="w-5 h-5" id="dynamic-tab-icon"></i>
+      <span id="dynamic-tab-label">Помощь</span>
     </div>
   </div>
 
 <script>
   lucide.createIcons();
 
-  // PC State Database (55 Total PCs based on your exact layout)
+  let isAdmin = false;
+
+  // Login Handle
+  document.getElementById('login-btn').onclick = () => {
+    const nick = document.getElementById('login-username').value.trim() || 'Alex_Major';
+    const phone = document.getElementById('login-phone').value.trim() || '+998 90 123 45 67';
+    const pass = document.getElementById('login-password').value.trim();
+
+    document.getElementById('user-display-name').innerText = nick;
+    document.getElementById('profile-nick-display').innerText = nick;
+    document.getElementById('user-display-phone').innerText = phone;
+    document.getElementById('profile-phone-display').innerText = phone;
+
+    // Check if Password is Admin
+    if (pass.toLowerCase() === 'admin') {
+      isAdmin = true;
+      document.getElementById('dynamic-tab').setAttribute('data-tab', 'admin');
+      document.getElementById('dynamic-tab-label').innerText = 'Админка';
+      document.getElementById('dynamic-tab-icon').setAttribute('data-lucide', 'sliders');
+    } else {
+      isAdmin = false;
+      document.getElementById('dynamic-tab').setAttribute('data-tab', 'help');
+      document.getElementById('dynamic-tab-label').innerText = 'Помощь';
+      document.getElementById('dynamic-tab-icon').setAttribute('data-lucide', 'headphones');
+    }
+    lucide.createIcons();
+
+    document.getElementById('login-modal').classList.add('hidden');
+  };
+
+  document.getElementById('logout-btn').onclick = () => {
+    document.getElementById('login-modal').classList.remove('hidden');
+  };
+
+  // PC State Setup
   const pcData = [];
   let idCounter = 1;
 
   function generateZone(zoneName, count) {
     const list = [];
     for(let i=0; i<count; i++) {
-      const pc = {
-        id: idCounter++,
-        zone: zoneName,
-        status: Math.random() < 0.25 ? 'busy' : 'free' // Random initial busy state
-      };
+      const pc = { id: idCounter++, zone: zoneName, status: Math.random() < 0.2 ? 'busy' : 'free' };
       pcData.push(pc);
       list.push(pc);
     }
@@ -318,17 +434,9 @@
   }
 
   const zones = {
-    vip5: generateZone('VIP 5', 5),
-    pro1: generateZone('PRO 1', 5),
-    pro2: generateZone('PRO 2', 5),
-    vip4: generateZone('VIP 4', 5),
-    vip3: generateZone('VIP 3', 5),
-    vip2: generateZone('VIP 2', 5),
-    vip1: generateZone('VIP 1', 5),
-    row4: generateZone('Зал Ряд 4', 5),
-    row3: generateZone('Зал Ряд 3', 5),
-    row2: generateZone('Зал Ряд 2', 5),
-    row1: generateZone('Зал Ряд 1', 5)
+    pro1: generateZone('PRO 1', 5), pro2: generateZone('PRO 2', 5),
+    vip4: generateZone('VIP 4', 5), vip3: generateZone('VIP 3', 5), vip2: generateZone('VIP 2', 5), vip1: generateZone('VIP 1', 5),
+    row4: generateZone('Зал Ряд 4', 5), row3: generateZone('Зал Ряд 3', 5), row2: generateZone('Зал Ряд 2', 5), row1: generateZone('Зал Ряд 1', 5)
   };
 
   let selectedPcId = null;
@@ -347,7 +455,6 @@
         container.appendChild(dot);
       });
     });
-
     renderAdminPanel();
   }
 
@@ -360,61 +467,51 @@
     renderMap();
   }
 
-  // Admin Functionality
   function renderAdminPanel() {
     const adminContainer = document.getElementById('admin-pc-list');
     if(!adminContainer) return;
     adminContainer.innerHTML = '';
-
     let busyCount = 0;
 
     pcData.forEach(pc => {
       if(pc.status === 'busy') busyCount++;
-
       const btn = document.createElement('button');
       btn.className = `p-2 rounded-lg text-xs font-bold text-center border ${
         pc.status === 'free' ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-300' :
         pc.status === 'busy' ? 'bg-red-500/20 border-red-500/40 text-red-300' : 'bg-gray-700/40 border-gray-600 text-gray-300'
       }`;
       btn.innerText = `#${pc.id}`;
-      btn.onclick = () => togglePcStatusAdmin(pc);
+      btn.onclick = () => {
+        pc.status = pc.status === 'free' ? 'busy' : (pc.status === 'busy' ? 'off' : 'free');
+        renderMap();
+      };
       adminContainer.appendChild(btn);
     });
-
     document.getElementById('admin-busy-count').innerText = `${busyCount} / ${pcData.length}`;
   }
 
-  function togglePcStatusAdmin(pc) {
-    if(pc.status === 'free') pc.status = 'busy';
-    else if(pc.status === 'busy') pc.status = 'off';
-    else pc.status = 'free';
-    renderMap();
-  }
-
-  // Navigation Tabs
+  // Navigation
   document.querySelectorAll('.tab-btn').forEach(tab => {
     tab.addEventListener('click', () => {
       document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
       document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-      
       tab.classList.add('active');
-      const targetView = document.getElementById(`view-${tab.getAttribute('data-tab')}`);
-      if(targetView) targetView.classList.add('active');
+      const targetView = tab.getAttribute('data-tab');
+      document.getElementById(`view-${targetView}`).classList.add('active');
     });
   });
 
-  // Admin Balance Topup
+  // Top Up
   document.getElementById('admin-topup-btn').onclick = () => {
     const input = document.getElementById('admin-topup-amount');
     const val = parseInt(input.value);
-    if(val && val > 0) {
+    if(val > 0) {
       document.getElementById('user-balance').innerText = `${val.toLocaleString()} UZS`;
-      alert(`Баланс успешно пополнен на ${val.toLocaleString()} UZS!`);
+      alert(`Баланс пополнен!`);
       input.value = '';
     }
   };
 
-  // Initial Render
   renderMap();
 </script>
 </body>
