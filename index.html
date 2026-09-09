@@ -29,7 +29,6 @@
   }
   .font-title { font-family: 'Space Grotesk', sans-serif; }
 
-  /* Interactive Button Scale Animations */
   button, .tab-btn, .pc-dot, .wc-btn {
     transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   }
@@ -47,37 +46,18 @@
     box-shadow: 0 4px 18px rgba(99, 102, 241, 0.35);
   }
 
-  /* Flying Poop Animation */
   @keyframes flyPoopAnim {
-    0% {
-      transform: translate(-50%, -50%) scale(0.1) rotate(0deg);
-      opacity: 0;
-    }
-    20% {
-      opacity: 1;
-      transform: translate(-50%, -50%) scale(2.5) rotate(180deg);
-    }
-    70% {
-      opacity: 1;
-      transform: translate(-50%, -50%) scale(4.5) rotate(540deg);
-    }
-    100% {
-      opacity: 0;
-      transform: translate(-50%, -50%) scale(7) rotate(900deg);
-    }
+    0% { transform: translate(-50%, -50%) scale(0.1) rotate(0deg); opacity: 0; }
+    20% { opacity: 1; transform: translate(-50%, -50%) scale(2.5) rotate(180deg); }
+    70% { opacity: 1; transform: translate(-50%, -50%) scale(4.5) rotate(540deg); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(7) rotate(900deg); }
   }
 
   .poop-overlay {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    z-index: 9999;
-    font-size: 80px;
-    pointer-events: none;
-    animation: flyPoopAnim 1.3s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    position: fixed; top: 50%; left: 50%; z-index: 9999; font-size: 80px;
+    pointer-events: none; animation: flyPoopAnim 1.3s cubic-bezier(0.25, 1, 0.5, 1) forwards;
   }
 
-  /* Social Pulse Effects */
   @keyframes pulse-insta {
     0%, 100% { transform: scale(1); box-shadow: 0 0 8px rgba(236, 72, 153, 0.6); }
     50% { transform: scale(1.08); box-shadow: 0 0 16px rgba(236, 72, 153, 1); }
@@ -89,11 +69,9 @@
   .social-insta { animation: pulse-insta 3s infinite; background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%,#d6249f 60%,#285AEB 90%); }
   .social-tg { animation: pulse-tg 3s infinite 1.5s; background: #0088cc; }
 
-  /* Map Container Setup */
   .map-box {
     background: #020308; border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 16px; padding: 6px; display: flex; flex-direction: column; gap: 5px;
-    width: 100%;
+    border-radius: 16px; padding: 6px; display: flex; flex-direction: column; gap: 5px; width: 100%;
   }
 
   .room-card {
@@ -102,7 +80,6 @@
     display: flex; flex-direction: column; justify-content: space-between;
   }
 
-  /* PC Status Dots */
   .pc-dot {
     width: 16px; height: 16px; border-radius: 4px;
     cursor: pointer; display: flex; align-items: center; justify-content: center;
@@ -113,7 +90,6 @@
   .pc-repair { background: #f59e0b; box-shadow: 0 0 6px rgba(245, 158, 11, 0.6); color: #000; }
   .pc-selected { outline: 2px solid #fff; transform: scale(1.3); z-index: 10; box-shadow: 0 0 12px #fff; }
 
-  /* Tab Bar */
   .tabbar {
     position: fixed; bottom: 8px; left: 50%; transform: translateX(-50%);
     width: calc(100% - 20px); max-width: 420px;
@@ -133,10 +109,8 @@
 </head>
 <body class="max-w-md mx-auto p-3">
 
-  <!-- CONTAINER FOR FLYING POOP EASTER EGG -->
   <div id="poop-container"></div>
 
-  <!-- TOP TOAST NOTIFICATION -->
   <div id="toast-notification" class="fixed top-3 left-1/2 -translate-x-1/2 z-50 bg-emerald-600 text-white px-4 py-2.5 rounded-2xl shadow-2xl flex items-center gap-2 text-xs font-bold transition-all duration-300 transform -translate-y-16 opacity-0 pointer-events-none w-[90%] max-w-xs justify-center border border-emerald-400/40">
     <i id="toast-icon" data-lucide="check-circle-2" class="w-4 h-4"></i>
     <span id="toast-text">Уведомление</span>
@@ -145,7 +119,6 @@
   <!-- USER LOGIN MODAL -->
   <div id="login-modal" class="fixed inset-0 z-50 bg-[#060812] flex items-center justify-center p-4">
     <div class="glass w-full max-w-sm p-6 space-y-4 border-indigo-500/30 relative bg-[#0d1021]">
-      
       <button id="secret-admin-btn" class="absolute top-4 right-4 p-2 text-gray-500 hover:text-indigo-400 transition-colors">
         <i data-lucide="shield-lock" class="w-5 h-5"></i>
       </button>
@@ -185,7 +158,7 @@
     </div>
   </div>
 
-  <!-- SECRET ADMIN AUTH MODAL -->
+  <!-- SECRET ADMIN AUTH MODAL (Code changed to 8888, hint removed) -->
   <div id="admin-auth-modal" class="fixed inset-0 z-50 bg-[#060812] flex items-center justify-center p-4 hidden">
     <div class="glass w-full max-w-sm p-6 space-y-4 border-red-500/40 bg-[#140a10]">
       <div class="text-center space-y-1">
@@ -193,12 +166,12 @@
           <i data-lucide="shield-alert" class="w-6 h-6 text-red-400"></i>
         </div>
         <h2 class="font-title text-xl font-bold text-white">Вход Администратора</h2>
-        <p class="text-xs text-gray-400">Введите секретный код</p>
+        <p class="text-xs text-gray-400">Введите секретный код доступа</p>
       </div>
 
       <div class="space-y-3 pt-1">
         <div>
-          <input type="password" id="admin-secret-input" placeholder="Код (7777)" class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-red-500 text-center font-bold tracking-widest">
+          <input type="password" id="admin-secret-input" placeholder="Введите код доступа" class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-red-500 text-center font-bold tracking-widest">
         </div>
         <div class="flex gap-2">
           <button id="admin-cancel-btn" onclick="playClickSound()" class="flex-1 glass py-3 rounded-xl font-bold text-gray-400 text-xs">Отмена</button>
@@ -223,6 +196,36 @@
     </div>
   </div>
 
+  <!-- MODAL: HARDWARE SPECS & FPS -->
+  <div id="specs-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 hidden">
+    <div class="glass w-full max-w-sm p-4 space-y-3 border-cyan-500/40 bg-[#070b19]">
+      <div class="flex justify-between items-center border-b border-white/10 pb-2">
+        <h3 class="font-title font-bold text-sm text-white flex items-center gap-2">
+          <i data-lucide="cpu" class="w-4 h-4 text-cyan-400"></i> Железо и производительность (FPS)
+        </h3>
+        <button id="close-specs-btn" onclick="playClickSound()" class="text-gray-400 hover:text-white"><i data-lucide="x" class="w-4 h-4"></i></button>
+      </div>
+      <div class="space-y-2 text-xs text-gray-300">
+        <div class="bg-white/5 p-2.5 rounded-xl border border-white/10 space-y-1">
+          <p class="font-bold text-cyan-400">Спецификации ПК:</p>
+          <p>• Видеокарта: NVIDIA GeForce RTX 4070 12GB</p>
+          <p>• Процессор: Intel Core i7-13700K</p>
+          <p>• ОЗУ: 32GB Kingston Fury DDR5 5600MHz</p>
+          <p>• Монитор: ASUS ROG Strix 240Hz 0.5ms</p>
+        </div>
+        <div class="bg-white/5 p-2.5 rounded-xl border border-white/10">
+          <p class="font-bold text-indigo-400 mb-1">Средний FPS в играх:</p>
+          <div class="grid grid-cols-2 gap-1 text-[11px]">
+            <div>Counter-Strike 2: <span class="text-emerald-400 font-bold">450+ FPS</span></div>
+            <div>Dota 2: <span class="text-emerald-400 font-bold">300+ FPS</span></div>
+            <div>Valorant: <span class="text-emerald-400 font-bold">500+ FPS</span></div>
+            <div>PUBG / Warzone: <span class="text-emerald-400 font-bold">220+ FPS</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- HEADER -->
   <div class="flex justify-between items-center mb-3">
     <div class="flex items-center gap-2.5">
@@ -237,7 +240,6 @@
       </div>
     </div>
 
-    <!-- SOCIAL MEDIA BUTTONS -->
     <div class="flex items-center gap-2">
       <a href="https://instagram.com/majorgc_fergana" target="_blank" onclick="playClickSound()" title="Instagram"
          class="social-insta w-8 h-8 rounded-xl flex items-center justify-center text-white shadow-lg">
@@ -253,7 +255,6 @@
   <!-- VIEW: HOME / MAP -->
   <div id="view-home" class="view active space-y-2.5">
 
-    <!-- USER INFO CARD + MY BOOKINGS BUTTON -->
     <div class="glass p-3 space-y-2">
       <div class="flex justify-between items-center border-b border-white/5 pb-2">
         <div>
@@ -279,7 +280,7 @@
       </div>
     </div>
 
-    <!-- PC PRICES TABLE BANNER -->
+    <!-- PRICES TABLE BANNER -->
     <div class="glass p-3 border-indigo-500/40 bg-gradient-to-br from-indigo-950/30 via-purple-950/20 to-black">
       <div class="flex justify-between items-center mb-2 pb-1.5 border-b border-white/10">
         <span class="text-xs font-bold text-white flex items-center gap-1.5">
@@ -288,7 +289,6 @@
         <span class="text-[9px] bg-cyan-500/20 text-cyan-300 px-2 py-0.5 rounded-full font-semibold">Тарифы</span>
       </div>
 
-      <!-- PRICE TABLE GRID -->
       <div class="overflow-hidden rounded-xl border border-white/10">
         <table class="w-full text-left border-collapse text-[11px]">
           <thead>
@@ -323,7 +323,6 @@
       </div>
     </div>
 
-    <!-- MAP HEADER LEGEND -->
     <div class="flex justify-between items-center">
       <h2 class="font-title text-xs font-bold text-gray-200">3D Карта Клуба (Вид сверху)</h2>
       <div class="flex gap-2 text-[9px]">
@@ -333,36 +332,28 @@
       </div>
     </div>
 
-    <!-- TOP-DOWN MAP -->
+    <!-- TOP-DOWN MAP WITH PERFECTLY ALIGNED PS ZONES -->
     <div class="map-box">
       
-      <!-- TOP ROW: WC + PRO 1 + PRO 2 -->
       <div class="grid grid-cols-3 gap-1.5">
-        
-        <!-- CLICKABLE TOILET WC (EASTER EGG) -->
         <div id="wc-btn" onclick="triggerWCEasterEgg()" 
              class="wc-btn border border-cyan-500/40 rounded-lg bg-cyan-950/30 p-1 flex items-center justify-center gap-1 cursor-pointer hover:bg-cyan-900/50">
           <i data-lucide="toilet" class="w-3.5 h-3.5 text-cyan-400"></i>
           <span class="text-[9px] font-extrabold text-cyan-300">WC 🚽</span>
         </div>
         
-        <!-- PRO 1 -->
         <div class="room-card">
           <span class="text-[8px] font-bold text-cyan-400 block mb-1">PRO 1</span>
           <div class="flex justify-between border-t border-cyan-500/30 pt-1" id="zone-pro1"></div>
         </div>
 
-        <!-- PRO 2 -->
         <div class="room-card">
           <span class="text-[8px] font-bold text-cyan-400 block mb-1">PRO 2</span>
           <div class="flex justify-between border-t border-cyan-500/30 pt-1" id="zone-pro2"></div>
         </div>
       </div>
 
-      <!-- MIDDLE ROW: VIPs (Left) | MAIN HALL (Center) | PS ROOM 2 (Right) -->
       <div class="grid grid-cols-12 gap-1.5 my-0.5">
-        
-        <!-- LEFT COLUMN: VIP 4..1 -->
         <div class="col-span-3 flex flex-col gap-1">
           <div class="room-card flex-1">
             <span class="text-[7px] font-bold text-indigo-400">VIP 4</span>
@@ -382,7 +373,6 @@
           </div>
         </div>
 
-        <!-- CENTER: MAIN HALL (2 ROWS OF 5 PCs) -->
         <div class="col-span-6 room-card justify-between p-1.5 bg-indigo-950/20 border-indigo-500/20">
           <span class="text-[8px] font-bold text-gray-400 text-center block">ОСНОВНОЙ ЗАЛ</span>
           <div class="space-y-3 my-auto">
@@ -391,7 +381,7 @@
           </div>
         </div>
 
-        <!-- RIGHT: PS ROOM 2 (IDENTICAL TO PS 1) -->
+        <!-- PS 2 (Identical size and structure to PS 1) -->
         <div class="col-span-3 room-card border-purple-500/50 bg-purple-950/30 justify-between">
           <div class="flex items-center justify-between">
             <span class="text-[8px] font-bold text-purple-300">PS 2</span>
@@ -401,16 +391,12 @@
         </div>
       </div>
 
-      <!-- BOTTOM ROW: EXIT + BAR + PS ROOM 1 (RIGHT OF BAR) -->
       <div class="grid grid-cols-12 gap-1.5">
-        
-        <!-- EXIT -->
         <div class="col-span-3 border border-red-500/40 rounded-lg bg-red-950/30 p-1 flex items-center justify-center gap-1">
           <i data-lucide="door-open" class="w-3.5 h-3.5 text-red-400"></i>
           <span class="text-[8px] font-extrabold text-red-300">ВЫХОД</span>
         </div>
 
-        <!-- BAR (CENTER) -->
         <div class="col-span-5 border border-amber-500/40 rounded-xl bg-gradient-to-r from-amber-950/40 to-amber-900/20 p-1.5 flex items-center justify-between">
           <div class="flex items-center gap-1.5">
             <div class="w-6 h-6 rounded-lg bg-amber-500/20 flex items-center justify-center border border-amber-500/40">
@@ -421,7 +407,7 @@
           <span class="text-[8px] bg-amber-500/20 text-amber-300 px-1 py-0.5 rounded font-bold">24/7</span>
         </div>
 
-        <!-- PS ROOM 1 (RIGHT OF BAR - 100% IDENTICAL TO PS 2) -->
+        <!-- PS 1 (Identical layout to PS 2) -->
         <div class="col-span-4 room-card border-purple-500/50 bg-purple-950/30 justify-between">
           <div class="flex items-center justify-between">
             <span class="text-[8px] font-bold text-purple-300">PS 1</span>
@@ -433,15 +419,28 @@
 
     </div>
 
-    <!-- SELECTED PC CARD -->
-    <div id="booking-card" class="glass p-3 hidden border-indigo-500/50">
-      <div class="flex justify-between items-center">
+    <!-- ENHANCED BOOKING CARD WITH DURATION SELECTION -->
+    <div id="booking-card" class="glass p-3 hidden border-indigo-500/50 space-y-2.5">
+      <div class="flex justify-between items-center border-b border-white/10 pb-2">
         <div>
           <p class="font-title font-bold text-sm text-indigo-300" id="selected-pc-title">ПК #12</p>
           <p class="text-[11px] text-gray-400" id="selected-pc-zone">Зона: VIP Room 1</p>
         </div>
-        <button id="do-book-btn" class="btn-primary px-4 py-2 rounded-xl text-xs font-bold text-white">Забронировать</button>
+        <span class="text-[10px] text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded">Доступно</span>
       </div>
+
+      <div>
+        <label class="text-[10px] text-gray-400 block mb-1 font-semibold">Выберите длительность брони:</label>
+        <div class="grid grid-cols-3 gap-1.5" id="booking-durations">
+          <button onclick="selectDuration(1, 15000)" class="duration-btn active glass p-1.5 text-center rounded-xl text-[11px] font-bold text-indigo-300 border-indigo-500">1 Час</button>
+          <button onclick="selectDuration(3, 40000)" class="duration-btn glass p-1.5 text-center rounded-xl text-[11px] font-bold text-gray-300">3 Часа</button>
+          <button onclick="selectDuration(6, 75000)" class="duration-btn glass p-1.5 text-center rounded-xl text-[11px] font-bold text-gray-300">Пакет 6ч</button>
+        </div>
+      </div>
+
+      <button id="do-book-btn" class="w-full btn-primary py-2.5 rounded-xl text-xs font-bold text-white flex items-center justify-center gap-1.5">
+        <i data-lucide="check-circle" class="w-4 h-4"></i> Забронировать место
+      </button>
     </div>
 
   </div>
@@ -451,7 +450,6 @@
     <div class="glass p-4 space-y-3.5">
       <h2 class="font-title font-bold text-base text-white">Профиль игрока</h2>
       
-      <!-- Avatar & Photo Upload -->
       <div class="flex items-center gap-3.5 p-3 bg-white/5 rounded-2xl border border-white/10">
         <div class="relative">
           <img id="profile-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80" 
@@ -467,7 +465,6 @@
         </div>
       </div>
 
-      <!-- PLAYER STATS SECTION -->
       <div class="space-y-2">
         <p class="text-xs font-semibold text-gray-400">Игровая статистика</p>
         <div class="grid grid-cols-2 gap-2">
@@ -489,17 +486,16 @@
         </div>
       </div>
 
-      <!-- USEFUL BUTTONS / EXTRAS -->
       <div class="space-y-1.5 pt-1 border-t border-white/10">
         <p class="text-xs font-semibold text-gray-400 mb-1">Полезное и настройки ПК</p>
         
-        <button onclick="playClickSound(); alert('Характеристики ПК:\n- Видеокарта: RTX 4070 12GB\n- Процессор: Core i7 13700K\n- Мониторы: ASUS ROG 240Hz\n- Наушники: HyperX Cloud II')" 
+        <button onclick="playClickSound(); document.getElementById('specs-modal').classList.remove('hidden');" 
                 class="w-full glass p-2.5 flex justify-between items-center text-xs text-gray-200">
-          <span class="flex items-center gap-2"><i data-lucide="cpu" class="w-4 h-4 text-cyan-400"></i> Характеристики железа ПК</span>
+          <span class="flex items-center gap-2"><i data-lucide="cpu" class="w-4 h-4 text-cyan-400"></i> Характеристики железа ПК & FPS</span>
           <i data-lucide="chevron-right" class="w-4 h-4 text-gray-500"></i>
         </button>
 
-        <button onclick="playClickSound(); alert('Меню Бара скоро появится в приложении! Закажите у администратора.')" 
+        <button onclick="playClickSound(); alert('Меню Бара скоро появится в приложении! Закажите снеки у администратора.')" 
                 class="w-full glass p-2.5 flex justify-between items-center text-xs text-gray-200">
           <span class="flex items-center gap-2"><i data-lucide="utensils" class="w-4 h-4 text-amber-400"></i> Экспресс-заказ из Бара</span>
           <i data-lucide="chevron-right" class="w-4 h-4 text-gray-500"></i>
@@ -559,7 +555,7 @@
     </div>
   </div>
 
-  <!-- VIEW: ADMIN PANEL -->
+  <!-- VIEW: ADMIN PANEL (Expanded with search, filters, revenue, users stats) -->
   <div id="view-admin" class="view space-y-3">
     <div class="glass p-4 space-y-3 border-red-500/30">
       <div class="flex justify-between items-center">
@@ -569,24 +565,32 @@
         <span class="text-[9px] bg-red-500/20 text-red-300 px-2 py-0.5 rounded-full font-bold">ADMIN MODE</span>
       </div>
 
-      <div class="grid grid-cols-2 gap-2 text-center">
+      <div class="grid grid-cols-3 gap-2 text-center">
         <div class="bg-white/5 p-2 rounded-xl">
-          <p class="text-[10px] text-gray-400">Занято мест</p>
-          <p class="font-title text-sm font-bold text-white" id="admin-busy-count">0 / 44</p>
+          <p class="text-[9px] text-gray-400">Занято мест</p>
+          <p class="font-title text-xs font-bold text-white" id="admin-busy-count">0 / 44</p>
         </div>
         <div class="bg-white/5 p-2 rounded-xl">
-          <p class="text-[10px] text-gray-400">Касса за смену</p>
-          <p class="font-title text-sm font-bold text-emerald-400">1,240,000 UZS</p>
+          <p class="text-[9px] text-gray-400">Касса смены</p>
+          <p class="font-title text-xs font-bold text-emerald-400">1,240,000 UZ</p>
         </div>
+        <div class="bg-white/5 p-2 rounded-xl">
+          <p class="text-[9px] text-gray-400">Гости онлайн</p>
+          <p class="font-title text-xs font-bold text-cyan-400" id="admin-users-count">24</p>
+        </div>
+      </div>
+
+      <div class="flex gap-2">
+        <input type="text" id="admin-search-pc" placeholder="Поиск места (например, ПК #12, VIP)..." class="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-red-500">
       </div>
 
       <div class="bg-indigo-500/10 border border-indigo-500/20 p-2 rounded-xl text-[10px] text-indigo-200">
-        💡 Нажмите на ПК для смены статуса: <b class="text-emerald-400">Свободен</b> ➔ <b class="text-red-400">Занят</b> ➔ <b class="text-amber-400">Ремонт</b>.
+        💡 Кликните по месту для смены статуса: <b class="text-emerald-400">Свободен</b> ➔ <b class="text-red-400">Занят</b> ➔ <b class="text-amber-400">Ремонт</b>.
       </div>
 
       <div>
-        <p class="text-xs text-gray-400 mb-1.5 font-semibold">Управление местами</p>
-        <div id="admin-pc-list" class="grid grid-cols-5 gap-1.5 max-h-52 overflow-y-auto pr-1"></div>
+        <p class="text-xs text-gray-400 mb-1.5 font-semibold">Управление местами клуба</p>
+        <div id="admin-pc-list" class="grid grid-cols-5 gap-1.5 max-h-48 overflow-y-auto pr-1"></div>
       </div>
 
       <div class="pt-2 border-t border-white/10 space-y-2">
@@ -618,7 +622,6 @@
 <script>
   lucide.createIcons();
 
-  // AUDIO SYSTEM VIA WEB AUDIO API (NO EXTERNAL FILES REQUIRED)
   let audioCtx = null;
   function getAudioContext() {
     if(!audioCtx) {
@@ -630,7 +633,6 @@
     return audioCtx;
   }
 
-  // 1. Click Sound Effect
   function playClickSound() {
     try {
       const ctx = getAudioContext();
@@ -648,7 +650,6 @@
     } catch(e) {}
   }
 
-  // 2. Error / Booked Warning Sound Effect
   function playErrorSound() {
     try {
       const ctx = getAudioContext();
@@ -666,7 +667,6 @@
     } catch(e) {}
   }
 
-  // 3. Success Sound
   function playSuccessSound() {
     try {
       const ctx = getAudioContext();
@@ -684,7 +684,6 @@
     } catch(e) {}
   }
 
-  // 4. Synthesized Fart Sound for WC Easter Egg
   function playFartSound() {
     try {
       const ctx = getAudioContext();
@@ -696,7 +695,6 @@
       osc.frequency.setValueAtTime(130, now);
       osc.frequency.exponentialRampToValueAtTime(35, now + 0.5);
 
-      // Pitch wobble (LFO)
       const lfo = ctx.createOscillator();
       lfo.frequency.value = 30;
       const lfoGain = ctx.createGain();
@@ -715,7 +713,6 @@
     } catch(e) {}
   }
 
-  // WC EASTER EGG ACTION (FLYING POOP)
   function triggerWCEasterEgg() {
     playFartSound();
     const container = document.getElementById('poop-container');
@@ -729,11 +726,12 @@
     }, 1300);
   }
 
-  const ADMIN_SECRET_CODE = '7777';
+  const ADMIN_SECRET_CODE = '8888'; // Updated secret code
   let isAdmin = false;
   let myBookings = JSON.parse(localStorage.getItem('major_my_bookings') || '[]');
+  let selectedDurationHours = 1;
+  let selectedDurationPrice = 15000;
 
-  // TOAST NOTIFICATION SYSTEM
   function showToast(msg, type = 'success') {
     const toast = document.getElementById('toast-notification');
     const toastText = document.getElementById('toast-text');
@@ -755,7 +753,6 @@
     }, 3500);
   }
 
-  // PERSISTENT AVATAR SETUP
   const savedAvatar = localStorage.getItem('major_user_avatar');
   if (savedAvatar) {
     document.getElementById('header-avatar').src = savedAvatar;
@@ -778,7 +775,6 @@
     }
   };
 
-  // PERSISTENT AUTO-LOGIN SESSION
   function applyUserData(nick, phone, adminStatus = false) {
     document.getElementById('user-display-name').innerText = nick;
     document.getElementById('profile-nick-display').innerText = nick;
@@ -798,7 +794,6 @@
     lucide.createIcons();
   }
 
-  // Check existing session on load
   const existingSession = localStorage.getItem('major_user_session');
   if (existingSession) {
     try {
@@ -808,7 +803,6 @@
     } catch(e) {}
   }
 
-  // Login Button
   document.getElementById('login-btn').onclick = () => {
     const rawNick = document.getElementById('login-username').value.trim() || 'Alex_Major';
     const rawPhone = document.getElementById('login-phone').value.trim() || '90 123 45 67';
@@ -817,14 +811,11 @@
     const fullPhone = '+998 ' + rawPhone.replace(/^\+998\s?/, '');
 
     applyUserData(fullNick, fullPhone, false);
-
-    // Save session
     localStorage.setItem('major_user_session', JSON.stringify({ nick: fullNick, phone: fullPhone, isAdmin: false }));
     document.getElementById('login-modal').classList.add('hidden');
     playSuccessSound();
   };
 
-  // Admin Login
   document.getElementById('secret-admin-btn').onclick = () => document.getElementById('admin-auth-modal').classList.remove('hidden');
   document.getElementById('admin-cancel-btn').onclick = () => document.getElementById('admin-auth-modal').classList.add('hidden');
 
@@ -842,18 +833,17 @@
     }
   };
 
-  // Logout (Manual)
   document.getElementById('logout-btn').onclick = () => {
     localStorage.removeItem('major_user_session');
     document.getElementById('login-modal').classList.remove('hidden');
   };
 
-  // BOOKINGS MODAL SYSTEM
   document.getElementById('open-bookings-btn').onclick = () => {
     renderBookings();
     document.getElementById('bookings-modal').classList.remove('hidden');
   };
   document.getElementById('close-bookings-btn').onclick = () => document.getElementById('bookings-modal').classList.add('hidden');
+  document.getElementById('close-specs-btn').onclick = () => document.getElementById('specs-modal').classList.add('hidden');
 
   function renderBookings() {
     const container = document.getElementById('bookings-list');
@@ -864,15 +854,14 @@
     container.innerHTML = myBookings.map(b => `
       <div class="bg-white/5 border border-white/10 p-2.5 rounded-xl flex justify-between items-center text-xs">
         <div>
-          <p class="font-bold text-indigo-300">${b.label}</p>
+          <p class="font-bold text-indigo-300">${b.label} (${b.hours}ч)</p>
           <p class="text-[10px] text-gray-400">${b.zone} • ${b.time}</p>
         </div>
-        <span class="bg-emerald-500/20 text-emerald-400 text-[9px] px-2 py-0.5 rounded-full font-bold">Активно (1 час)</span>
+        <span class="bg-emerald-500/20 text-emerald-400 text-[9px] px-2 py-0.5 rounded-full font-bold">Активно</span>
       </div>
     `).join('');
   }
 
-  // PC DATA STRUCTURE
   const pcData = [];
   let idCounter = 1;
 
@@ -940,7 +929,6 @@
     renderAdminPanel();
   }
 
-  // FIXED PC SELECTION AND BOOKED WARNING BUG
   function selectPC(pc) {
     playClickSound();
     
@@ -959,15 +947,25 @@
     renderMap();
   }
 
-  // BOOKING ACTION
+  function selectDuration(hours, price) {
+    playClickSound();
+    selectedDurationHours = hours;
+    selectedDurationPrice = price;
+    document.querySelectorAll('.duration-btn').forEach(btn => {
+      btn.classList.remove('border', 'border-indigo-500', 'text-indigo-300', 'active');
+      btn.classList.add('text-gray-300');
+    });
+    event.currentTarget.classList.add('border', 'border-indigo-500', 'text-indigo-300', 'active');
+  }
+
   document.getElementById('do-book-btn').onclick = () => {
     if (selectedPc) {
       selectedPc.status = 'busy';
       
-      // Add to bookings
       myBookings.unshift({
         label: selectedPc.label,
         zone: selectedPc.zone,
+        hours: selectedDurationHours,
         time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
       });
       localStorage.setItem('major_my_bookings', JSON.stringify(myBookings));
@@ -975,21 +973,27 @@
       saveState();
       renderMap();
       playSuccessSound();
-      showToast(`Ваш ${selectedPc.label} забронирован на 1 час!`);
+      showToast(`Успешно забронирован ${selectedPc.label} на ${selectedDurationHours}ч!`);
       document.getElementById('booking-card').classList.add('hidden');
       selectedPc = null;
     }
   };
 
-  // ADMIN PANEL SWITCHER
   function renderAdminPanel() {
     const adminContainer = document.getElementById('admin-pc-list');
     if(!adminContainer) return;
     adminContainer.innerHTML = '';
     let busyCount = 0;
 
+    const searchTerm = document.getElementById('admin-search-pc') ? document.getElementById('admin-search-pc').value.toLowerCase() : '';
+
     pcData.forEach(pc => {
       if(pc.status === 'busy') busyCount++;
+      
+      if(searchTerm && !pc.label.toLowerCase().includes(searchTerm) && !pc.zone.toLowerCase().includes(searchTerm)) {
+        return;
+      }
+
       const btn = document.createElement('button');
       btn.className = `p-1.5 rounded-lg text-[10px] font-bold text-center border ${
         pc.status === 'free' ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-300' :
@@ -1007,7 +1011,13 @@
     document.getElementById('admin-busy-count').innerText = `${busyCount} / ${pcData.length}`;
   }
 
-  // Navigation Tabs
+  const searchInput = document.getElementById('admin-search-pc');
+  if(searchInput) {
+    searchInput.oninput = () => {
+      renderAdminPanel();
+    };
+  }
+
   document.querySelectorAll('.tab-btn').forEach(tab => {
     tab.addEventListener('click', () => {
       document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
@@ -1018,7 +1028,6 @@
     });
   });
 
-  // Top Up Action
   document.getElementById('admin-topup-btn').onclick = () => {
     const input = document.getElementById('admin-topup-amount');
     const val = parseInt(input.value);
