@@ -24,7 +24,7 @@
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   body {
     margin: 0; background: var(--bg); color: #f3f4f6;
-    font-family: 'Inter', sans-serif; min-height: 100vh; padding-bottom: 85px;
+    font-family: 'Inter', sans-serif; min-height: 100vh; padding-bottom: 100px;
     overflow-x: hidden;
   }
   .font-title { font-family: 'Space Grotesk', sans-serif; }
@@ -81,7 +81,7 @@
   }
 
   .pc-dot {
-    width: 16px; height: 16px; border-radius: 4px;
+    width: 18px; height: 18px; border-radius: 4px;
     cursor: pointer; display: flex; align-items: center; justify-content: center;
     font-size: 8px; font-weight: 800; color: #000;
   }
@@ -105,6 +105,9 @@
 
   .view { display: none; }
   .view.active { display: block; }
+  
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 </style>
 </head>
 <body class="max-w-md mx-auto p-3">
@@ -153,12 +156,12 @@
           <input type="password" id="login-password" placeholder="••••••••" class="w-full bg-white/5 border border-white/10 rounded-xl p-2.5 text-sm text-white focus:outline-none focus:border-indigo-500">
         </div>
 
-        <button id="login-btn" onclick="playClickSound()" class="w-full btn-primary py-3 rounded-xl font-bold text-white text-sm mt-2">Войти в клуб</button>
+        <button id="login-btn" class="w-full btn-primary py-3 rounded-xl font-bold text-white text-sm mt-2">Войти в клуб</button>
       </div>
     </div>
   </div>
 
-  <!-- SECRET ADMIN AUTH MODAL (Code changed to 8888, hint removed) -->
+  <!-- SECRET ADMIN AUTH MODAL -->
   <div id="admin-auth-modal" class="fixed inset-0 z-50 bg-[#060812] flex items-center justify-center p-4 hidden">
     <div class="glass w-full max-w-sm p-6 space-y-4 border-red-500/40 bg-[#140a10]">
       <div class="text-center space-y-1">
@@ -174,8 +177,8 @@
           <input type="password" id="admin-secret-input" placeholder="Введите код доступа" class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-red-500 text-center font-bold tracking-widest">
         </div>
         <div class="flex gap-2">
-          <button id="admin-cancel-btn" onclick="playClickSound()" class="flex-1 glass py-3 rounded-xl font-bold text-gray-400 text-xs">Отмена</button>
-          <button id="admin-login-submit" onclick="playClickSound()" class="flex-1 bg-red-600 hover:bg-red-500 py-3 rounded-xl font-bold text-white text-xs">Войти</button>
+          <button id="admin-cancel-btn" class="flex-1 glass py-3 rounded-xl font-bold text-gray-400 text-xs">Отмена</button>
+          <button id="admin-login-submit" class="flex-1 bg-red-600 hover:bg-red-500 py-3 rounded-xl font-bold text-white text-xs">Войти</button>
         </div>
       </div>
     </div>
@@ -188,7 +191,7 @@
         <h3 class="font-title font-bold text-sm text-white flex items-center gap-2">
           <i data-lucide="bookmark" class="w-4 h-4 text-indigo-400"></i> Мои Бронирования
         </h3>
-        <button id="close-bookings-btn" onclick="playClickSound()" class="text-gray-400 hover:text-white"><i data-lucide="x" class="w-4 h-4"></i></button>
+        <button id="close-bookings-btn" class="text-gray-400 hover:text-white"><i data-lucide="x" class="w-4 h-4"></i></button>
       </div>
       <div id="bookings-list" class="space-y-2 max-h-60 overflow-y-auto pr-1">
         <p class="text-xs text-gray-400 text-center py-4">У вас пока нет активных броней</p>
@@ -203,7 +206,7 @@
         <h3 class="font-title font-bold text-sm text-white flex items-center gap-2">
           <i data-lucide="cpu" class="w-4 h-4 text-cyan-400"></i> Железо и производительность (FPS)
         </h3>
-        <button id="close-specs-btn" onclick="playClickSound()" class="text-gray-400 hover:text-white"><i data-lucide="x" class="w-4 h-4"></i></button>
+        <button id="close-specs-btn" class="text-gray-400 hover:text-white"><i data-lucide="x" class="w-4 h-4"></i></button>
       </div>
       <div class="space-y-2 text-xs text-gray-300">
         <div class="bg-white/5 p-2.5 rounded-xl border border-white/10 space-y-1">
@@ -222,6 +225,44 @@
             <div>PUBG / Warzone: <span class="text-emerald-400 font-bold">220+ FPS</span></div>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: ИНФОРМАЦИЯ О ЮЗЕРЕ ДЛЯ АДМИНА -->
+  <div id="admin-user-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="glass p-4 w-full max-w-sm space-y-3 border-cyan-400/50 bg-[#0a0d1d]">
+      <div class="flex justify-between items-start border-b border-white/10 pb-2">
+        <div>
+          <h3 class="font-title text-sm font-bold text-white" id="modal-user-name">@User</h3>
+          <p class="text-xs text-cyan-400" id="modal-user-phone">+998 90 123 45 67</p>
+        </div>
+        <button onclick="closeAdminUserModal()" class="text-gray-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <div class="grid grid-cols-2 gap-2 text-center">
+        <div class="bg-white/5 p-2 rounded-xl border border-white/5">
+          <p class="text-[9px] text-gray-400 font-bold uppercase">Всего потрачено</p>
+          <p class="font-title text-xs font-bold text-emerald-400" id="modal-user-spent">0 UZS</p>
+        </div>
+        <div class="bg-white/5 p-2 rounded-xl border border-white/5">
+          <p class="text-[9px] text-gray-400 font-bold uppercase">Баланс</p>
+          <p class="font-title text-xs font-bold text-cyan-300" id="modal-user-balance">0 UZS</p>
+        </div>
+      </div>
+
+      <div>
+        <p class="text-[10px] text-gray-400 font-bold uppercase mb-1">История игр / сессий</p>
+        <div class="space-y-1.5 max-h-32 overflow-y-auto pr-1" id="modal-user-history"></div>
+      </div>
+
+      <div class="pt-2 flex gap-2">
+        <button onclick="addBalancePromptAdmin()" class="flex-1 bg-emerald-600/30 border border-emerald-500/50 text-emerald-300 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1">
+          <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i> Пополнить
+        </button>
+        <button onclick="resetUserSessionAdmin()" class="flex-1 bg-red-600/30 border border-red-500/50 text-red-300 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1">
+          <i data-lucide="power" class="w-3.5 h-3.5"></i> Сброс ПК
+        </button>
       </div>
     </div>
   </div>
@@ -262,7 +303,7 @@
           <p class="font-bold text-xs text-white" id="user-display-name">@Alex_Major</p>
         </div>
         <div class="text-right">
-          <button id="open-bookings-btn" onclick="playClickSound()" class="bg-indigo-600/30 border border-indigo-500/40 text-indigo-300 px-2.5 py-1 rounded-xl text-[10px] font-bold flex items-center gap-1 hover:bg-indigo-600/50">
+          <button id="open-bookings-btn" class="bg-indigo-600/30 border border-indigo-500/40 text-indigo-300 px-2.5 py-1 rounded-xl text-[10px] font-bold flex items-center gap-1 hover:bg-indigo-600/50">
             <i data-lucide="bookmark" class="w-3 h-3"></i> Мои брони
           </button>
         </div>
@@ -332,7 +373,7 @@
       </div>
     </div>
 
-    <!-- TOP-DOWN MAP WITH PERFECTLY ALIGNED PS ZONES -->
+    <!-- TOP-DOWN MAP -->
     <div class="map-box">
       
       <div class="grid grid-cols-3 gap-1.5">
@@ -381,7 +422,6 @@
           </div>
         </div>
 
-        <!-- PS 2 (Identical size and structure to PS 1) -->
         <div class="col-span-3 room-card border-purple-500/50 bg-purple-950/30 justify-between">
           <div class="flex items-center justify-between">
             <span class="text-[8px] font-bold text-purple-300">PS 2</span>
@@ -407,7 +447,6 @@
           <span class="text-[8px] bg-amber-500/20 text-amber-300 px-1 py-0.5 rounded font-bold">24/7</span>
         </div>
 
-        <!-- PS 1 (Identical layout to PS 2) -->
         <div class="col-span-4 room-card border-purple-500/50 bg-purple-950/30 justify-between">
           <div class="flex items-center justify-between">
             <span class="text-[8px] font-bold text-purple-300">PS 1</span>
@@ -419,7 +458,7 @@
 
     </div>
 
-    <!-- ENHANCED BOOKING CARD WITH DURATION SELECTION -->
+    <!-- ENHANCED BOOKING CARD (Всплывающий плавающий блок) -->
     <div id="booking-card" class="glass p-3 hidden border-indigo-500/50 space-y-2.5">
       <div class="flex justify-between items-center border-b border-white/10 pb-2">
         <div>
@@ -432,9 +471,9 @@
       <div>
         <label class="text-[10px] text-gray-400 block mb-1 font-semibold">Выберите длительность брони:</label>
         <div class="grid grid-cols-3 gap-1.5" id="booking-durations">
-          <button onclick="selectDuration(1, 15000)" class="duration-btn active glass p-1.5 text-center rounded-xl text-[11px] font-bold text-indigo-300 border-indigo-500">1 Час</button>
-          <button onclick="selectDuration(3, 40000)" class="duration-btn glass p-1.5 text-center rounded-xl text-[11px] font-bold text-gray-300">3 Часа</button>
-          <button onclick="selectDuration(6, 75000)" class="duration-btn glass p-1.5 text-center rounded-xl text-[11px] font-bold text-gray-300">Пакет 6ч</button>
+          <button onclick="selectDuration(event, 1, 15000)" class="duration-btn active glass p-1.5 text-center rounded-xl text-[11px] font-bold text-indigo-300 border-indigo-500">1 Час</button>
+          <button onclick="selectDuration(event, 3, 40000)" class="duration-btn glass p-1.5 text-center rounded-xl text-[11px] font-bold text-gray-300">3 Часа</button>
+          <button onclick="selectDuration(event, 6, 75000)" class="duration-btn glass p-1.5 text-center rounded-xl text-[11px] font-bold text-gray-300">Пакет 6ч</button>
         </div>
       </div>
 
@@ -454,7 +493,7 @@
         <div class="relative">
           <img id="profile-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80" 
                alt="Avatar" class="w-14 h-14 rounded-full object-cover border-2 border-indigo-500">
-          <button id="change-avatar-btn" onclick="playClickSound()" class="absolute -bottom-1 -right-1 bg-indigo-600 p-1.5 rounded-full text-white border border-black shadow-lg">
+          <button id="change-avatar-btn" class="absolute -bottom-1 -right-1 bg-indigo-600 p-1.5 rounded-full text-white border border-black shadow-lg">
             <i data-lucide="camera" class="w-3 h-3"></i>
           </button>
           <input type="file" id="avatar-file-input" accept="image/*" class="hidden">
@@ -489,8 +528,7 @@
       <div class="space-y-1.5 pt-1 border-t border-white/10">
         <p class="text-xs font-semibold text-gray-400 mb-1">Полезное и настройки ПК</p>
         
-        <button onclick="playClickSound(); document.getElementById('specs-modal').classList.remove('hidden');" 
-                class="w-full glass p-2.5 flex justify-between items-center text-xs text-gray-200">
+        <button id="open-specs-btn" class="w-full glass p-2.5 flex justify-between items-center text-xs text-gray-200">
           <span class="flex items-center gap-2"><i data-lucide="cpu" class="w-4 h-4 text-cyan-400"></i> Характеристики железа ПК & FPS</span>
           <i data-lucide="chevron-right" class="w-4 h-4 text-gray-500"></i>
         </button>
@@ -508,7 +546,7 @@
         </button>
       </div>
 
-      <button id="logout-btn" onclick="playClickSound()" class="w-full bg-red-500/10 border border-red-500/20 text-red-400 py-2.5 rounded-xl text-xs font-bold mt-2">
+      <button id="logout-btn" class="w-full bg-red-500/10 border border-red-500/20 text-red-400 py-2.5 rounded-xl text-xs font-bold mt-2">
         Сменить аккаунт / Выйти
       </button>
     </div>
@@ -555,7 +593,7 @@
     </div>
   </div>
 
-  <!-- VIEW: ADMIN PANEL (Expanded with search, filters, revenue, users stats) -->
+  <!-- VIEW: ADMIN PANEL (ПОЛНАЯ УПРАВЛЯЮЩАЯ ПАНЕЛЬ С ЮЗЕРАМИ И ПК) -->
   <div id="view-admin" class="view space-y-3">
     <div class="glass p-4 space-y-3 border-red-500/30">
       <div class="flex justify-between items-center">
@@ -576,28 +614,48 @@
         </div>
         <div class="bg-white/5 p-2 rounded-xl">
           <p class="text-[9px] text-gray-400">Гости онлайн</p>
-          <p class="font-title text-xs font-bold text-cyan-400" id="admin-users-count">24</p>
+          <p class="font-title text-xs font-bold text-cyan-400" id="admin-users-count">3</p>
         </div>
       </div>
 
-      <div class="flex gap-2">
-        <input type="text" id="admin-search-pc" placeholder="Поиск места (например, ПК #12, VIP)..." class="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-red-500">
+      <!-- ПОИСК И СПИСОК ВСЕХ ПОЛЬЗОВАТЕЛЕЙ -->
+      <div class="pt-2 border-t border-white/10 space-y-2">
+        <div class="flex justify-between items-center">
+          <p class="text-xs text-gray-400 font-semibold flex items-center gap-1">
+            <i data-lucide="users" class="w-3.5 h-3.5 text-cyan-400"></i> Игроки / База пользователей
+          </p>
+        </div>
+
+        <div class="relative">
+          <i data-lucide="search" class="w-3.5 h-3.5 absolute left-3 top-2.5 text-gray-400"></i>
+          <input type="text" id="admin-search-users" oninput="renderAdminUsersList()" placeholder="Поиск по юзернейму или телефону..." 
+                 class="w-full bg-white/5 border border-white/10 rounded-xl pl-8 pr-3 py-1.5 text-xs text-white focus:outline-none focus:border-cyan-400">
+        </div>
+
+        <div id="admin-users-list" class="space-y-1.5 max-h-40 overflow-y-auto pr-1"></div>
       </div>
 
-      <div class="bg-indigo-500/10 border border-indigo-500/20 p-2 rounded-xl text-[10px] text-indigo-200">
-        💡 Кликните по месту для смены статуса: <b class="text-emerald-400">Свободен</b> ➔ <b class="text-red-400">Занят</b> ➔ <b class="text-amber-400">Ремонт</b>.
-      </div>
+      <!-- УПРАВЛЕНИЕ МЕСТАМИ -->
+      <div class="pt-2 border-t border-white/10 space-y-2">
+        <p class="text-xs text-gray-400 font-semibold flex items-center gap-1">
+          <i data-lucide="monitor" class="w-3.5 h-3.5 text-indigo-400"></i> Карта / Статусы мест
+        </p>
+        <div class="flex gap-2">
+          <input type="text" id="admin-search-pc" placeholder="Поиск ПК (напр. ПК #12)..." class="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-red-500">
+        </div>
 
-      <div>
-        <p class="text-xs text-gray-400 mb-1.5 font-semibold">Управление местами клуба</p>
-        <div id="admin-pc-list" class="grid grid-cols-5 gap-1.5 max-h-48 overflow-y-auto pr-1"></div>
+        <div class="bg-indigo-500/10 border border-indigo-500/20 p-2 rounded-xl text-[10px] text-indigo-200">
+          💡 Клик по кнопке ПК меняет статус: <b class="text-emerald-400">Свободен</b> ➔ <b class="text-red-400">Занят</b> ➔ <b class="text-amber-400">Ремонт</b>.
+        </div>
+
+        <div id="admin-pc-list" class="grid grid-cols-5 gap-1.5 max-h-40 overflow-y-auto pr-1"></div>
       </div>
 
       <div class="pt-2 border-t border-white/10 space-y-2">
-        <p class="text-xs text-gray-400 font-semibold">Пополнить баланс гостю</p>
+        <p class="text-xs text-gray-400 font-semibold">Быстрое пополнение баланса</p>
         <div class="flex gap-2">
           <input type="number" placeholder="Сумма UZS" id="admin-topup-amount" class="flex-1 bg-white/5 border border-white/10 rounded-xl px-3 text-xs text-white">
-          <button id="admin-topup-btn" onclick="playClickSound()" class="bg-emerald-600 hover:bg-emerald-500 px-4 py-2 rounded-xl text-xs font-bold text-white">Пополнить</button>
+          <button id="admin-topup-btn" class="bg-emerald-600 hover:bg-emerald-500 px-4 py-2 rounded-xl text-xs font-bold text-white">Пополнить</button>
         </div>
       </div>
     </div>
@@ -605,15 +663,15 @@
 
   <!-- TAB BAR -->
   <div class="tabbar">
-    <div class="tab-btn active" data-tab="home" onclick="playClickSound()">
+    <div class="tab-btn active" data-tab="home">
       <i data-lucide="map" class="w-4 h-4"></i>
       <span>Карта</span>
     </div>
-    <div class="tab-btn" data-tab="profile" onclick="playClickSound()">
+    <div class="tab-btn" data-tab="profile">
       <i data-lucide="user" class="w-4 h-4"></i>
       <span>Профиль</span>
     </div>
-    <div class="tab-btn" data-tab="help" id="dynamic-tab" onclick="playClickSound()">
+    <div class="tab-btn" data-tab="help" id="dynamic-tab">
       <i data-lucide="headphones" class="w-4 h-4" id="dynamic-tab-icon"></i>
       <span id="dynamic-tab-label">Помощь</span>
     </div>
@@ -726,11 +784,39 @@
     }, 1300);
   }
 
-  const ADMIN_SECRET_CODE = '8888'; // Updated secret code
+  const ADMIN_SECRET_CODE = '8888';
   let isAdmin = false;
   let myBookings = JSON.parse(localStorage.getItem('major_my_bookings') || '[]');
   let selectedDurationHours = 1;
   let selectedDurationPrice = 15000;
+
+  // База данных пользователей в Админке
+  const mockUsersList = [
+    {
+      id: 1, name: "@Alex_Major", phone: "+998 90 123 45 67", status: "playing", currentPc: "ПК #12",
+      balance: 150000, totalSpent: 1450000,
+      history: [
+        { date: "Сегодня, 14:00", pc: "ПК #12 (VIP)", duration: "2 ч.", cost: "40,000 UZS" },
+        { date: "Вчера, 18:30", pc: "ПК #04 (PRO)", duration: "3 ч.", cost: "75,000 UZS" }
+      ]
+    },
+    {
+      id: 2, name: "@Sardor_Gamer", phone: "+998 91 987 65 43", status: "online", currentPc: null,
+      balance: 45000, totalSpent: 620000,
+      history: [
+        { date: "08 Сен, 20:00", pc: "ПК #01 (PRO 1)", duration: "4 ч.", cost: "100,000 UZS" }
+      ]
+    },
+    {
+      id: 3, name: "@Dmitry_Pro", phone: "+998 93 555 44 33", status: "offline", currentPc: null,
+      balance: 12000, totalSpent: 310000,
+      history: [
+        { date: "05 Сен, 15:00", pc: "ПК #21 (Main)", duration: "1 ч.", cost: "15,000 UZS" }
+      ]
+    }
+  ];
+
+  let activeAdminSelectedUser = null;
 
   function showToast(msg, type = 'success') {
     const toast = document.getElementById('toast-notification');
@@ -759,7 +845,11 @@
     document.getElementById('profile-avatar').src = savedAvatar;
   }
 
-  document.getElementById('change-avatar-btn').onclick = () => document.getElementById('avatar-file-input').click();
+  document.getElementById('change-avatar-btn').onclick = () => {
+    playClickSound();
+    document.getElementById('avatar-file-input').click();
+  };
+
   document.getElementById('avatar-file-input').onchange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -782,12 +872,13 @@
     document.getElementById('profile-phone-display').innerText = phone;
 
     isAdmin = adminStatus;
+    const dynamicTab = document.getElementById('dynamic-tab');
     if (isAdmin) {
-      document.getElementById('dynamic-tab').setAttribute('data-tab', 'admin');
+      dynamicTab.setAttribute('data-tab', 'admin');
       document.getElementById('dynamic-tab-label').innerText = 'Админка';
       document.getElementById('dynamic-tab-icon').setAttribute('data-lucide', 'sliders');
     } else {
-      document.getElementById('dynamic-tab').setAttribute('data-tab', 'help');
+      dynamicTab.setAttribute('data-tab', 'help');
       document.getElementById('dynamic-tab-label').innerText = 'Помощь';
       document.getElementById('dynamic-tab-icon').setAttribute('data-lucide', 'headphones');
     }
@@ -804,6 +895,7 @@
   }
 
   document.getElementById('login-btn').onclick = () => {
+    playClickSound();
     const rawNick = document.getElementById('login-username').value.trim() || 'Alex_Major';
     const rawPhone = document.getElementById('login-phone').value.trim() || '90 123 45 67';
 
@@ -816,10 +908,18 @@
     playSuccessSound();
   };
 
-  document.getElementById('secret-admin-btn').onclick = () => document.getElementById('admin-auth-modal').classList.remove('hidden');
-  document.getElementById('admin-cancel-btn').onclick = () => document.getElementById('admin-auth-modal').classList.add('hidden');
+  document.getElementById('secret-admin-btn').onclick = () => {
+    playClickSound();
+    document.getElementById('admin-auth-modal').classList.remove('hidden');
+  };
+
+  document.getElementById('admin-cancel-btn').onclick = () => {
+    playClickSound();
+    document.getElementById('admin-auth-modal').classList.add('hidden');
+  };
 
   document.getElementById('admin-login-submit').onclick = () => {
+    playClickSound();
     const pass = document.getElementById('admin-secret-input').value.trim();
     if (pass === ADMIN_SECRET_CODE) {
       applyUserData('Администратор', 'ADMIN MODE', true);
@@ -834,16 +934,31 @@
   };
 
   document.getElementById('logout-btn').onclick = () => {
+    playClickSound();
     localStorage.removeItem('major_user_session');
     document.getElementById('login-modal').classList.remove('hidden');
   };
 
   document.getElementById('open-bookings-btn').onclick = () => {
+    playClickSound();
     renderBookings();
     document.getElementById('bookings-modal').classList.remove('hidden');
   };
-  document.getElementById('close-bookings-btn').onclick = () => document.getElementById('bookings-modal').classList.add('hidden');
-  document.getElementById('close-specs-btn').onclick = () => document.getElementById('specs-modal').classList.add('hidden');
+
+  document.getElementById('close-bookings-btn').onclick = () => {
+    playClickSound();
+    document.getElementById('bookings-modal').classList.add('hidden');
+  };
+
+  document.getElementById('open-specs-btn').onclick = () => {
+    playClickSound();
+    document.getElementById('specs-modal').classList.remove('hidden');
+  };
+
+  document.getElementById('close-specs-btn').onclick = () => {
+    playClickSound();
+    document.getElementById('specs-modal').classList.add('hidden');
+  };
 
   function renderBookings() {
     const container = document.getElementById('bookings-list');
@@ -947,7 +1062,7 @@
     renderMap();
   }
 
-  function selectDuration(hours, price) {
+  function selectDuration(evt, hours, price) {
     playClickSound();
     selectedDurationHours = hours;
     selectedDurationPrice = price;
@@ -955,7 +1070,9 @@
       btn.classList.remove('border', 'border-indigo-500', 'text-indigo-300', 'active');
       btn.classList.add('text-gray-300');
     });
-    event.currentTarget.classList.add('border', 'border-indigo-500', 'text-indigo-300', 'active');
+    if(evt && evt.currentTarget) {
+      evt.currentTarget.classList.add('border', 'border-indigo-500', 'text-indigo-300', 'active');
+    }
   }
 
   document.getElementById('do-book-btn').onclick = () => {
@@ -1009,6 +1126,107 @@
       adminContainer.appendChild(btn);
     });
     document.getElementById('admin-busy-count').innerText = `${busyCount} / ${pcData.length}`;
+    renderAdminUsersList();
+  }
+
+  function renderAdminUsersList() {
+    const listContainer = document.getElementById('admin-users-list');
+    if (!listContainer) return;
+    const searchVal = document.getElementById('admin-search-users') ? document.getElementById('admin-search-users').value.toLowerCase() : '';
+
+    listContainer.innerHTML = '';
+    const filtered = mockUsersList.filter(u => u.name.toLowerCase().includes(searchVal) || u.phone.includes(searchVal));
+    document.getElementById('admin-users-count').innerText = filtered.length;
+
+    filtered.forEach(u => {
+      const badge = u.status === 'playing'
+        ? `<span class="text-[8px] bg-red-500/20 text-red-400 px-1.5 py-0.5 rounded font-bold">${u.currentPc}</span>`
+        : u.status === 'online'
+        ? `<span class="text-[8px] bg-emerald-500/20 text-emerald-400 px-1.5 py-0.5 rounded font-bold">В сети</span>`
+        : `<span class="text-[8px] bg-gray-500/20 text-gray-400 px-1.5 py-0.5 rounded font-bold">Офлайн</span>`;
+
+      const div = document.createElement('div');
+      div.className = 'glass p-2 flex justify-between items-center cursor-pointer hover:border-cyan-400/50 transition-all';
+      div.onclick = () => openAdminUserModal(u);
+      div.innerHTML = `
+        <div class="flex items-center gap-2">
+          <div class="w-7 h-7 rounded-full bg-indigo-900/60 border border-indigo-500/40 flex items-center justify-center font-bold text-xs text-cyan-300">
+            ${u.name[1].toUpperCase()}
+          </div>
+          <div>
+            <div class="flex items-center gap-1.5">
+              <p class="font-title text-xs font-bold text-white">${u.name}</p>
+              ${badge}
+            </div>
+            <p class="text-[9px] text-gray-400">${u.phone}</p>
+          </div>
+        </div>
+        <div class="text-right">
+          <p class="text-[8px] text-gray-400">Баланс</p>
+          <p class="font-title text-xs font-bold text-emerald-400">${u.balance.toLocaleString()} UZS</p>
+        </div>
+      `;
+      listContainer.appendChild(div);
+    });
+  }
+
+  function openAdminUserModal(user) {
+    playClickSound();
+    activeAdminSelectedUser = user;
+    document.getElementById('modal-user-name').innerText = user.name;
+    document.getElementById('modal-user-phone').innerText = user.phone;
+    document.getElementById('modal-user-spent').innerText = `${user.totalSpent.toLocaleString()} UZS`;
+    document.getElementById('modal-user-balance').innerText = `${user.balance.toLocaleString()} UZS`;
+
+    const hist = document.getElementById('modal-user-history');
+    hist.innerHTML = '';
+    user.history.forEach(h => {
+      const hItem = document.createElement('div');
+      hItem.className = 'bg-white/5 p-1.5 rounded-lg text-[10px] flex justify-between items-center';
+      hItem.innerHTML = `
+        <div>
+          <p class="font-bold text-white">${h.pc}</p>
+          <p class="text-[8px] text-gray-400">${h.date}</p>
+        </div>
+        <div class="text-right">
+          <p class="text-cyan-300 font-bold">${h.cost}</p>
+          <p class="text-[8px] text-gray-400">${h.duration}</p>
+        </div>
+      `;
+      hist.appendChild(hItem);
+    });
+
+    document.getElementById('admin-user-modal').classList.remove('hidden');
+  }
+
+  function closeAdminUserModal() {
+    playClickSound();
+    document.getElementById('admin-user-modal').classList.add('hidden');
+  }
+
+  function addBalancePromptAdmin() {
+    if (!activeAdminSelectedUser) return;
+    playClickSound();
+    const val = prompt(`Пополнить баланс для ${activeAdminSelectedUser.name} (UZS):`, "50000");
+    if (val && !isNaN(val)) {
+      activeAdminSelectedUser.balance += parseInt(val);
+      openAdminUserModal(activeAdminSelectedUser);
+      renderAdminUsersList();
+      showToast(`Баланс ${activeAdminSelectedUser.name} пополнен!`);
+      playSuccessSound();
+    }
+  }
+
+  function resetUserSessionAdmin() {
+    if (!activeAdminSelectedUser) return;
+    playClickSound();
+    if (confirm(`Сбросить текущую сессию для ${activeAdminSelectedUser.name}?`)) {
+      activeAdminSelectedUser.status = "online";
+      activeAdminSelectedUser.currentPc = null;
+      openAdminUserModal(activeAdminSelectedUser);
+      renderAdminUsersList();
+      showToast(`Сессия пользователя сброшена`);
+    }
   }
 
   const searchInput = document.getElementById('admin-search-pc');
@@ -1020,15 +1238,21 @@
 
   document.querySelectorAll('.tab-btn').forEach(tab => {
     tab.addEventListener('click', () => {
+      playClickSound();
       document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
       document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      
       tab.classList.add('active');
       const targetView = tab.getAttribute('data-tab');
-      document.getElementById(`view-${targetView}`).classList.add('active');
+      const targetElement = document.getElementById(`view-${targetView}`);
+      if(targetElement) {
+        targetElement.classList.add('active');
+      }
     });
   });
 
   document.getElementById('admin-topup-btn').onclick = () => {
+    playClickSound();
     const input = document.getElementById('admin-topup-amount');
     const val = parseInt(input.value);
     if(val > 0) {
