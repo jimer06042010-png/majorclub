@@ -809,7 +809,6 @@
       const res = await fetch('/api/users');
       const data = await res.json();
 
-      // Считываем список юзеров из ответа сервера
       const usersList = data.users || data.data || (Array.isArray(data) ? data : []);
 
       if (data.success && usersList.length > 0) {
