@@ -25,7 +25,7 @@
   body {
     margin: 0; background: var(--bg); color: #f3f4f6;
     font-family: 'Inter', sans-serif; min-height: 100vh;
-    padding-bottom: 120px; /* Отступ снизу для свободного клика по элементам */
+    padding-bottom: 120px;
     overflow-x: hidden;
   }
   .font-title { font-family: 'Space Grotesk', sans-serif; }
@@ -96,12 +96,11 @@
   .pc-repair { background: #f59e0b; box-shadow: 0 0 6px rgba(245, 158, 11, 0.6); color: #000; }
   .pc-selected { outline: 2px solid #fff; transform: scale(1.3); z-index: 10; box-shadow: 0 0 12px #fff; }
 
-  /* Нижняя фиксированная навигация */
   .bottom-nav {
     position: fixed; bottom: 0; left: 0; right: 0; height: 70px;
     background: rgba(10, 12, 22, 0.96); backdrop-filter: blur(20px);
     border-top: 1px solid var(--border);
-    display: flex; justify-content: space-around; align-items: center;
+    display: flex; justify-around: space-around; align-items: center;
     z-index: 9000; padding: 0 8px;
   }
   .nav-item {
@@ -160,17 +159,17 @@
           </div>
         </div>
 
-        <!-- Поле с секретным 4-значным кодом Админа -->
+        <!-- Поле с секретным 4-значным кодом Админа (6767) -->
         <div class="pt-2 border-t border-white/10">
           <label class="text-xs text-amber-400 font-bold block mb-1 flex items-center gap-1">
-            <i data-lucide="shield-alert" class="w-3.5 h-3.5"></i> Пин-код Админа (если вы Админ)
+            <i data-lucide="shield-alert" class="w-3.5 h-3.5"></i> Пин-код Админа (только для Админа)
           </label>
           <input type="password" id="login-admin-code" placeholder="Введите 6767" maxlength="4" 
                  class="w-full bg-white/5 border border-amber-500/30 rounded-xl p-2.5 text-sm text-amber-300 font-mono tracking-widest focus:outline-none focus:border-amber-400">
         </div>
 
         <button id="login-btn" class="w-full btn-primary py-3 rounded-xl font-bold text-white text-sm mt-2">
-          Войти в системы Major
+          Войти в систему Major
         </button>
       </div>
     </div>
@@ -237,13 +236,17 @@
         <video id="cameraVideo" autoplay playsinline class="w-full rounded-xl border border-amber-500/30 hidden max-h-40 object-cover"></video>
         <button id="snapBtn" onclick="takePhoto()" class="w-full bg-amber-500 text-black font-bold py-1.5 rounded-xl text-xs hidden">📸 Сделать снимок</button>
 
+        <div id="photo-preview-container" class="hidden">
+          <img id="photo-preview" src="" class="w-full h-32 object-cover rounded-xl border border-amber-500/40">
+        </div>
+
         <div class="flex gap-2">
           <button onclick="startCamera()" class="flex-1 bg-white/10 hover:bg-white/20 border border-white/10 py-2 rounded-xl text-xs font-bold text-amber-300 flex items-center justify-center gap-1">
             <i data-lucide="camera" class="w-3.5 h-3.5"></i> Камера
           </button>
           <label class="flex-1 bg-white/10 hover:bg-white/20 border border-white/10 py-2 rounded-xl text-xs font-bold text-cyan-300 flex items-center justify-center gap-1 cursor-pointer">
             <i data-lucide="upload" class="w-3.5 h-3.5"></i> Файл
-            <input type="file" id="missionFileInput" accept="image/*,video/*" class="hidden">
+            <input type="file" id="missionFileInput" accept="image/*" class="hidden" onchange="handleFileSelect(event)">
           </label>
         </div>
       </div>
@@ -443,7 +446,7 @@
       </div>
     </div>
 
-    <!-- BOOKING CARD (ПОЛНОСТЬЮ КЛИКАБЕЛЬНАЯ И ВЫНЕСЕННАЯ НАВЕРХ) -->
+    <!-- BOOKING CARD -->
     <div id="booking-card" class="glass p-3.5 hidden border-indigo-500/50 space-y-3 relative z-30">
       <div class="flex justify-between items-center border-b border-white/10 pb-2">
         <div>
@@ -478,10 +481,6 @@
         <div class="relative">
           <img id="profile-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80" 
                alt="Avatar" class="w-14 h-14 rounded-full object-cover border-2 border-indigo-500">
-          <button id="change-avatar-btn" class="absolute -bottom-1 -right-1 bg-indigo-600 p-1.5 rounded-full text-white border border-black shadow-lg">
-            <i data-lucide="camera" class="w-3 h-3"></i>
-          </button>
-          <input type="file" id="avatar-file-input" accept="image/*" class="hidden">
         </div>
         <div>
           <p class="font-bold text-white text-base" id="profile-nick-display">@Alex_Major</p>
@@ -523,12 +522,6 @@
           <span class="flex items-center gap-2"><i data-lucide="utensils" class="w-4 h-4 text-amber-400"></i> Экспресс-заказ из Бара</span>
           <i data-lucide="chevron-right" class="w-4 h-4 text-gray-500"></i>
         </button>
-
-        <button onclick="playClickSound(); alert('Ваш уровень: MAJOR GOLD 🎖️\nКэшбэк на баланс: 5%')" 
-                class="w-full glass p-2.5 flex justify-between items-center text-xs text-gray-200">
-          <span class="flex items-center gap-2"><i data-lucide="award" class="w-4 h-4 text-emerald-400"></i> VIP Уровень & Кэшбэк</span>
-          <i data-lucide="chevron-right" class="w-4 h-4 text-gray-500"></i>
-        </button>
       </div>
 
       <button id="logout-btn" class="w-full bg-red-500/10 border border-red-500/20 text-red-400 py-2.5 rounded-xl text-xs font-bold mt-2">
@@ -537,7 +530,7 @@
     </div>
   </div>
 
-  <!-- VIEW 3: MISSIONS (ОТДЕЛЬНЫЙ ЭКРАН МИСИЙ И БОНУСОВ) -->
+  <!-- VIEW 3: MISSIONS (С РАЗДЕЛОМ "В ПРОВЕРКЕ") -->
   <div id="view-missions" class="view space-y-3">
     <div class="glass p-4 space-y-3 border-amber-500/30">
       <div class="flex justify-between items-center border-b border-white/10 pb-2">
@@ -550,9 +543,18 @@
         <span class="text-[9px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full font-bold">CS2 & CLUB</span>
       </div>
 
-      <!-- Список небанальных миссий -->
+      <!-- РАЗДЕЛ "МИССИИ НА ПРОВЕРКЕ" У ЮЗЕРА -->
+      <div id="user-pending-missions-section" class="space-y-2 pt-1 border-b border-white/10 pb-3">
+        <p class="text-xs text-amber-300 font-bold flex items-center gap-1">
+          <i data-lucide="clock" class="w-3.5 h-3.5"></i> Мои миссии в проверке
+        </p>
+        <div id="user-pending-list" class="space-y-2">
+          <!-- Загружается динамически -->
+        </div>
+      </div>
+
+      <!-- Доступные миссии -->
       <div class="space-y-2.5 pt-1" id="user-missions-container">
-        
         <div class="bg-white/5 border border-white/10 p-3 rounded-2xl space-y-2 relative overflow-hidden">
           <div class="flex justify-between items-start">
             <div>
@@ -588,76 +590,46 @@
           <p class="text-[11px] text-gray-400">Убей всю вражескую команду 1v5 в официальном матче CS2</p>
           <button onclick="openMissionModal('Эйс 1v5')" class="w-full btn-amber py-2 rounded-xl text-black font-bold text-xs">Выполнить миссию</button>
         </div>
-
-        <div class="bg-white/5 border border-white/10 p-3 rounded-2xl space-y-2 relative overflow-hidden">
-          <div class="flex justify-between items-start">
-            <div>
-              <span class="text-[9px] bg-cyan-500/20 text-cyan-300 px-2 py-0.5 rounded-full font-bold">PvP Дуэль</span>
-              <h4 class="font-title font-bold text-xs text-white mt-1">«Хозяин Зала»</h4>
-            </div>
-            <span class="text-xs font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-1 rounded-lg">VIP ПК 1ч</span>
-          </div>
-          <p class="text-[11px] text-gray-400">Выиграй дуэль 1v1 на картах Aim у другого игрока в клубе</p>
-          <button onclick="openMissionModal('Хозяин Зала')" class="w-full btn-amber py-2 rounded-xl text-black font-bold text-xs">Выполнить миссию</button>
-        </div>
-
       </div>
     </div>
   </div>
 
-  <!-- VIEW 4: ADMIN / ПРОВЕРКА (ТОЛЬКО ПАНЕЛЬ ПРОВЕРКИ ДЛЯ АДМИНА) -->
+  <!-- VIEW 4: ADMIN / ПРОВЕРКА И СПИСОК ЮЗЕРОВ -->
   <div id="view-admin" class="view space-y-3">
     <div class="glass p-4 space-y-3 border-red-500/40 bg-[#0d070b]">
       <div class="flex justify-between items-center">
         <h2 class="font-title font-bold text-sm text-red-400 flex items-center gap-2">
-          <i data-lucide="shield-check" class="w-4 h-4"></i> Проверка & Администрирование
+          <i data-lucide="shield-check" class="w-4 h-4"></i> Панель Администратора
         </h2>
         <span class="text-[9px] bg-red-500/20 text-red-300 px-2 py-0.5 rounded-full font-bold">ADMIN MODE</span>
       </div>
 
-      <div class="grid grid-cols-3 gap-2 text-center">
-        <div class="bg-white/5 p-2 rounded-xl">
-          <p class="text-[9px] text-gray-400">Занято мест</p>
-          <p class="font-title text-xs font-bold text-white" id="admin-busy-count">0 / 44</p>
-        </div>
-        <div class="bg-white/5 p-2 rounded-xl">
-          <p class="text-[9px] text-gray-400">Касса смены</p>
-          <p class="font-title text-xs font-bold text-emerald-400">1,240,000 UZS</p>
-        </div>
-        <div class="bg-white/5 p-2 rounded-xl">
-          <p class="text-[9px] text-gray-400">Гости онлайн</p>
-          <p class="font-title text-xs font-bold text-cyan-400" id="admin-users-count">3</p>
+      <!-- СПИСОК ЗАРЕГИСТРИРОВАННЫХ РЕАЛЬНЫХ ЮЗЕРОВ -->
+      <div class="pt-2 border-t border-white/10 space-y-2">
+        <p class="text-xs text-cyan-400 font-bold flex items-center gap-1.5">
+          <i data-lucide="users" class="w-4 h-4"></i> Зарегистрированные клиенты
+        </p>
+        <div id="admin-users-list" class="space-y-1.5 max-h-36 overflow-y-auto pr-1">
+          <!-- Список заполнится из localStorage -->
         </div>
       </div>
 
-      <!-- ЕДИНСТВЕННЫЙ РАЗДЕЛ МИССИЙ В АДМИНКЕ — ТОЛЬКО ПРОВЕРКА ЗАЯВОК -->
+      <!-- РАЗДЕЛ МИССИИ И ФОТО ОТ ЮЗЕРОВ -->
       <div class="pt-2 border-t border-white/10 space-y-2">
         <p class="text-xs text-amber-400 font-bold flex items-center gap-1.5">
-          <i data-lucide="check-square" class="w-4 h-4"></i> Проверка Заявок на Миссии и Бонусы
+          <i data-lucide="check-square" class="w-4 h-4"></i> Входящие фото и миссии
         </p>
         <div id="admin-missions-list" class="space-y-2 max-h-52 overflow-y-auto pr-1">
-          <!-- Динамическая загрузка входящих доказательств от игроков -->
+          <!-- Фотографии от пользователей отображаются здесь -->
         </div>
       </div>
 
-      <!-- КАРТА И УПРАВЛЕНИЕ СТАТУСОМ ПК -->
+      <!-- КАРТА И УПРАВЛЕНИЕ ПК -->
       <div class="pt-2 border-t border-white/10 space-y-2">
         <p class="text-xs text-gray-400 font-semibold flex items-center gap-1">
-          <i data-lucide="monitor" class="w-3.5 h-3.5 text-indigo-400"></i> Мониторинг мест
+          <i data-lucide="monitor" class="w-3.5 h-3.5 text-indigo-400"></i> Мониторинг ПК
         </p>
-        <div class="bg-indigo-500/10 border border-indigo-500/20 p-2 rounded-xl text-[10px] text-indigo-200">
-          💡 Переключение статуса ПК: <b class="text-emerald-400">Свободен</b> ➔ <b class="text-red-400">Занят</b> ➔ <b class="text-amber-400">Ремонт</b>.
-        </div>
         <div id="admin-pc-list" class="grid grid-cols-5 gap-1.5 max-h-40 overflow-y-auto pr-1"></div>
-      </div>
-
-      <!-- ПОПОЛНЕНИЕ БАЛАНСА -->
-      <div class="pt-2 border-t border-white/10 space-y-2">
-        <p class="text-xs text-gray-400 font-semibold">Быстрое пополнение баланса гостя</p>
-        <div class="flex gap-2">
-          <input type="number" placeholder="Сумма UZS" id="admin-topup-amount" class="flex-1 bg-white/5 border border-white/10 rounded-xl px-3 text-xs text-white focus:outline-none focus:border-emerald-500">
-          <button id="admin-topup-btn" class="bg-emerald-600 hover:bg-emerald-500 px-4 py-2 rounded-xl text-xs font-bold text-white">Пополнить</button>
-        </div>
       </div>
     </div>
   </div>
@@ -686,12 +658,6 @@
            class="glass p-2.5 flex justify-between items-center text-xs font-medium text-gray-200">
           <span>📱 Сменить номер телефона</span>
           <i data-lucide="chevron-right" class="w-4 h-4 text-cyan-400"></i>
-        </a>
-
-        <a href="https://t.me/dihhari?text=Привет!%20У%20меня%20вопрос%20по%20пополнению%20баланса." target="_blank" onclick="playClickSound()"
-           class="glass p-2.5 flex justify-between items-center text-xs font-medium text-gray-200">
-          <span>💳 Вопрос по балансу</span>
-          <i data-lucide="chevron-right" class="w-4 h-4 text-emerald-400"></i>
         </a>
       </div>
     </div>
@@ -723,20 +689,25 @@
 <script>
   lucide.createIcons();
 
-  // Принудительный сброс предыдущих авторизаций при обновлении приложения
-  if (!localStorage.getItem('major_v3_reset')) {
-    localStorage.clear();
-    localStorage.setItem('major_v3_reset', 'true');
-  }
+  const ADMIN_PIN_CODE = '6767';
+  let isAdmin = false;
+  let currentUserBalance = 150000;
+  let currentUploadedPhoto = '';
 
+  let myBookings = JSON.parse(localStorage.getItem('major_my_bookings') || '[]');
+  let pendingMissions = JSON.parse(localStorage.getItem('major_pending_missions') || '[]');
+  let registeredUsers = JSON.parse(localStorage.getItem('major_registered_users') || '[]');
+
+  let selectedDurationHours = 1;
+  let selectedDurationPrice = 15000;
+  let selectedMissionTitle = '';
+  let currentCameraStream = null;
+
+  // Звуковые эффекты
   let audioCtx = null;
   function getAudioContext() {
-    if(!audioCtx) {
-      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    }
-    if(audioCtx.state === 'suspended') {
-      audioCtx.resume();
-    }
+    if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if(audioCtx.state === 'suspended') audioCtx.resume();
     return audioCtx;
   }
 
@@ -754,22 +725,6 @@
       gain.connect(ctx.destination);
       osc.start();
       osc.stop(ctx.currentTime + 0.05);
-    } catch(e) {}
-  }
-
-  function playErrorSound() {
-    try {
-      const ctx = getAudioContext();
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(150, ctx.currentTime);
-      gain.gain.setValueAtTime(0.2, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start();
-      osc.stop(ctx.currentTime + 0.2);
     } catch(e) {}
   }
 
@@ -791,21 +746,6 @@
   }
 
   function triggerWCEasterEgg() {
-    try {
-      const ctx = getAudioContext();
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(130, ctx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(35, ctx.currentTime + 0.5);
-      gain.gain.setValueAtTime(0.3, ctx.currentTime);
-      gain.gain.linearRampToValueAtTime(0.01, ctx.currentTime + 0.5);
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start();
-      osc.stop(ctx.currentTime + 0.5);
-    } catch(e) {}
-
     const container = document.getElementById('poop-container');
     const poop = document.createElement('div');
     poop.className = 'poop-overlay';
@@ -814,29 +754,9 @@
     setTimeout(() => poop.remove(), 1300);
   }
 
-  const ADMIN_PIN_CODE = '6767';
-  let isAdmin = false;
-  let currentUserBalance = 150000;
-  let myBookings = JSON.parse(localStorage.getItem('major_my_bookings') || '[]');
-  let selectedDurationHours = 1;
-  let selectedDurationPrice = 15000;
-
-  let pendingMissions = [];
-  let selectedMissionTitle = '';
-  let currentCameraStream = null;
-
   function showToast(msg, type = 'success') {
     const toast = document.getElementById('toast-notification');
-    const toastText = document.getElementById('toast-text');
-    toastText.innerText = msg;
-    
-    if (type === 'error') {
-      toast.className = toast.className.replace(/bg-\w+-600/, 'bg-red-600').replace(/border-\w+-400\/40/, 'border-red-400/40');
-      playErrorSound();
-    } else {
-      toast.className = toast.className.replace(/bg-\w+-600/, 'bg-emerald-600').replace(/border-\w+-400\/40/, 'border-emerald-400/40');
-    }
-
+    document.getElementById('toast-text').innerText = msg;
     toast.classList.remove('-translate-y-16', 'opacity-0', 'pointer-events-none');
     toast.classList.add('translate-y-0', 'opacity-100');
     setTimeout(() => {
@@ -845,10 +765,25 @@
     }, 3500);
   }
 
-  // LOGIC: MISSIONS & CAMERA
+  // ОБРАБОТКА ЗАГРУЗКИ ФОТОГРАФИИ МИССИИ
+  function handleFileSelect(event) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        currentUploadedPhoto = e.target.result;
+        document.getElementById('photo-preview').src = currentUploadedPhoto;
+        document.getElementById('photo-preview-container').classList.remove('hidden');
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
   function openMissionModal(title) {
     playClickSound();
     selectedMissionTitle = title;
+    currentUploadedPhoto = '';
+    document.getElementById('photo-preview-container').classList.add('hidden');
     document.getElementById('modal-mission-title').innerHTML = `<i data-lucide="crosshair" class="w-4 h-4 text-amber-400"></i> Миссия: ${title}`;
     document.getElementById('mission-modal').classList.remove('hidden');
     lucide.createIcons();
@@ -885,36 +820,78 @@
 
   function takePhoto() {
     playClickSound();
-    showToast('Снимок экрана зафиксирован!');
+    const video = document.getElementById('cameraVideo');
+    const canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth || 300;
+    canvas.height = video.videoHeight || 200;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    currentUploadedPhoto = canvas.toDataURL('image/jpeg');
+    
+    document.getElementById('photo-preview').src = currentUploadedPhoto;
+    document.getElementById('photo-preview-container').classList.remove('hidden');
     stopCamera();
+    showToast('Снимок экрана зафиксирован!');
   }
 
   function submitMission() {
     playClickSound();
-    const fileInput = document.getElementById('missionFileInput');
-    const file = fileInput.files[0];
+    if (!currentUploadedPhoto) {
+      showToast('Пожалуйста, сделайте фото или выберите файл!', 'error');
+      return;
+    }
     
     const newReq = {
       id: Date.now(),
       userName: document.getElementById('user-display-name').innerText,
       mission: selectedMissionTitle,
-      mediaUrl: file ? URL.createObjectURL(file) : 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=300&auto=format&fit=crop&q=80',
-      status: 'На проверке ⏳'
+      mediaUrl: currentUploadedPhoto,
+      status: 'pending'
     };
 
     pendingMissions.unshift(newReq);
-    showToast('Отправлено! Администратор проверит выполнение.');
+    localStorage.setItem('major_pending_missions', JSON.stringify(pendingMissions));
+
+    showToast('Бонусы поступят в течение 24 часов после проверки!');
     closeMissionModal();
+    renderUserPendingMissions();
     renderAdminMissionsList();
     playSuccessSound();
   }
 
+  // РЕНДЕР МИССИЙ "В ПРОВЕРКЕ" ДЛЯ ЮЗЕРА
+  function renderUserPendingMissions() {
+    const container = document.getElementById('user-pending-list');
+    if (!container) return;
+
+    const userNick = document.getElementById('user-display-name').innerText;
+    const userMissions = pendingMissions.filter(m => m.userName === userNick);
+
+    if (userMissions.length === 0) {
+      container.innerHTML = `<p class="text-[11px] text-gray-500 text-center py-2">У вас нет активных миссий на проверке</p>`;
+      return;
+    }
+
+    container.innerHTML = userMissions.map(m => `
+      <div class="bg-amber-500/10 border border-amber-500/20 p-2 rounded-xl flex justify-between items-center text-xs">
+        <div>
+          <p class="font-bold text-amber-300">${m.mission}</p>
+          <p class="text-[10px] text-gray-400">Бонусы поступят в течение 24 часов</p>
+        </div>
+        <span class="text-[9px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded font-bold">
+          ${m.status === 'pending' ? 'В проверке ⏳' : (m.status === 'approved' ? 'Выполнено ✅' : 'Отклонено ❌')}
+        </span>
+      </div>
+    `).join('');
+  }
+
+  // РЕНДЕР МИССИИ И ФОТО У АДМИНА
   function renderAdminMissionsList() {
     const container = document.getElementById('admin-missions-list');
     if (!container) return;
 
     if (pendingMissions.length === 0) {
-      container.innerHTML = `<p class="text-xs text-gray-500 text-center py-4">Нет входящих заявок на проверку</p>`;
+      container.innerHTML = `<p class="text-xs text-gray-500 text-center py-4">Нет входящих фото и миссий</p>`;
       return;
     }
 
@@ -922,11 +899,13 @@
       <div class="bg-white/5 border border-white/10 p-2.5 rounded-xl space-y-2 text-xs">
         <div class="flex justify-between items-center">
           <span class="font-bold text-white">${m.userName}</span>
-          <span class="text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded font-bold">${m.status}</span>
+          <span class="text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded font-bold">
+            ${m.status === 'pending' ? 'На проверке' : (m.status === 'approved' ? 'Одобрено' : 'Отклонено')}
+          </span>
         </div>
         <p class="text-[11px] text-gray-300">Миссия: <b class="text-amber-400">${m.mission}</b></p>
-        <img src="${m.mediaUrl}" class="w-full h-24 object-cover rounded-lg border border-white/10">
-        ${m.status === 'На проверке ⏳' ? `
+        <img src="${m.mediaUrl}" class="w-full h-32 object-cover rounded-lg border border-white/10">
+        ${m.status === 'pending' ? `
           <div class="flex gap-2 pt-1">
             <button onclick="approveMission(${m.id})" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-1.5 rounded-lg text-[10px]">Одобрить (+Бонус)</button>
             <button onclick="rejectMission(${m.id})" class="flex-1 bg-red-600 hover:bg-red-500 text-white font-bold py-1.5 rounded-lg text-[10px]">Отклонить</button>
@@ -940,11 +919,11 @@
     playClickSound();
     const req = pendingMissions.find(m => m.id === reqId);
     if (req) {
-      req.status = 'Выполнено ✅';
-      currentUserBalance += 15000;
-      document.getElementById('user-balance').innerText = `${currentUserBalance.toLocaleString()} UZS`;
+      req.status = 'approved';
+      localStorage.setItem('major_pending_missions', JSON.stringify(pendingMissions));
       showToast(`Одобрено! Награда выслана пользователю.`);
       renderAdminMissionsList();
+      renderUserPendingMissions();
       playSuccessSound();
     }
   }
@@ -953,13 +932,36 @@
     playClickSound();
     const req = pendingMissions.find(m => m.id === reqId);
     if (req) {
-      req.status = 'Отклонено ❌';
-      showToast('Заявка отклонена', 'error');
+      req.status = 'rejected';
+      localStorage.setItem('major_pending_missions', JSON.stringify(pendingMissions));
+      showToast('Заявка отклонена');
       renderAdminMissionsList();
+      renderUserPendingMissions();
     }
   }
 
-  // USER AUTHENTICATION & ADMIN ROLE SWITCH
+  // СПИСОК КЛИЕНТОВ ДЛЯ АДМИНА
+  function renderAdminUsersList() {
+    const container = document.getElementById('admin-users-list');
+    if (!container) return;
+
+    if (registeredUsers.length === 0) {
+      container.innerHTML = `<p class="text-xs text-gray-500 text-center py-2">Нет зарегистрированных пользователей</p>`;
+      return;
+    }
+
+    container.innerHTML = registeredUsers.map(u => `
+      <div class="bg-white/5 border border-white/10 p-2 rounded-xl flex justify-between items-center text-xs">
+        <div>
+          <p class="font-bold text-white">${u.nick}</p>
+          <p class="text-[10px] text-indigo-300">${u.phone}</p>
+        </div>
+        <span class="text-[9px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded font-bold">Игрок</span>
+      </div>
+    `).join('');
+  }
+
+  // АВТОРИЗАЦИЯ И СОХРАНЕНИЕ
   function applyUserData(nick, phone, adminStatus = false) {
     document.getElementById('user-display-name').innerText = nick;
     document.getElementById('profile-nick-display').innerText = nick;
@@ -974,7 +976,7 @@
       dynamicTab.setAttribute('data-tab', 'admin');
       document.getElementById('dynamic-tab-label').innerText = 'Проверка';
       document.getElementById('dynamic-tab-icon').setAttribute('data-lucide', 'shield-check');
-      if (missionsTabBtn) missionsTabBtn.style.display = 'none'; // У админа нет кнопки "Миссии"
+      if (missionsTabBtn) missionsTabBtn.style.display = 'none';
     } else {
       dynamicTab.setAttribute('data-tab', 'help');
       document.getElementById('dynamic-tab-label').innerText = 'Помощь';
@@ -982,6 +984,16 @@
       if (missionsTabBtn) missionsTabBtn.style.display = 'flex';
     }
     lucide.createIcons();
+    renderUserPendingMissions();
+    renderAdminUsersList();
+    renderAdminMissionsList();
+  }
+
+  // ПРОВЕРКА СОХРАНЕННОЙ СЕССИИ (ЧТОБЫ НЕ СПРАШИВАТЬ РЕГИСТРАЦИЮ СНОВА)
+  const savedUser = JSON.parse(localStorage.getItem('major_active_user'));
+  if (savedUser) {
+    applyUserData(savedUser.nick, savedUser.phone, savedUser.isAdmin);
+    document.getElementById('login-modal').classList.add('hidden');
   }
 
   document.getElementById('login-btn').onclick = () => {
@@ -993,20 +1005,33 @@
     const fullNick = '@' + rawNick.replace(/^@/, '');
     const fullPhone = '+998 ' + rawPhone.replace(/^\+998\s?/, '');
 
+    let userSession = {};
+
     if (adminCode === ADMIN_PIN_CODE) {
+      userSession = { nick: 'Администратор', phone: 'ADMIN MODE', isAdmin: true };
       applyUserData('Администратор', 'ADMIN MODE', true);
       showToast('Успешный вход в режим Администратора!');
     } else {
+      userSession = { nick: fullNick, phone: fullPhone, isAdmin: false };
+      
+      // Добавляем реального юзера в глобальную базу админа
+      if (!registeredUsers.some(u => u.nick === fullNick)) {
+        registeredUsers.unshift({ nick: fullNick, phone: fullPhone });
+        localStorage.setItem('major_registered_users', JSON.stringify(registeredUsers));
+      }
+
       applyUserData(fullNick, fullPhone, false);
       showToast('Добро пожаловать в Major Club!');
     }
 
+    localStorage.setItem('major_active_user', JSON.stringify(userSession));
     document.getElementById('login-modal').classList.add('hidden');
     playSuccessSound();
   };
 
   document.getElementById('logout-btn').onclick = () => {
     playClickSound();
+    localStorage.removeItem('major_active_user');
     document.getElementById('login-modal').classList.remove('hidden');
   };
 
@@ -1095,7 +1120,6 @@
 
   function selectPC(pc) {
     playClickSound();
-    
     if(pc.status === 'busy') {
       showToast(`⚠️ Этот ${pc.label} уже забронирован!`, 'error');
       return;
@@ -1124,17 +1148,16 @@
     }
   }
 
-  // Кнопка забронировать теперь полностью активна и кликабельна
   document.getElementById('do-book-btn').onclick = () => {
     if (selectedPc) {
       selectedPc.status = 'busy';
-      
       myBookings.unshift({
         label: selectedPc.label,
         zone: selectedPc.zone,
         hours: selectedDurationHours,
         time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
       });
+      localStorage.setItem('major_my_bookings', JSON.stringify(myBookings));
 
       renderMap();
       playSuccessSound();
@@ -1148,11 +1171,8 @@
     const adminContainer = document.getElementById('admin-pc-list');
     if(!adminContainer) return;
     adminContainer.innerHTML = '';
-    let busyCount = 0;
 
     pcData.forEach(pc => {
-      if(pc.status === 'busy') busyCount++;
-
       const btn = document.createElement('button');
       btn.className = `p-1.5 rounded-lg text-[10px] font-bold text-center border ${
         pc.status === 'free' ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-300' :
@@ -1166,8 +1186,6 @@
       };
       adminContainer.appendChild(btn);
     });
-    document.getElementById('admin-busy-count').innerText = `${busyCount} / ${pcData.length}`;
-    renderAdminMissionsList();
   }
 
   // ТАББАР И НАВИГАЦИЯ
@@ -1185,19 +1203,6 @@
       }
     });
   });
-
-  document.getElementById('admin-topup-btn').onclick = () => {
-    playClickSound();
-    const input = document.getElementById('admin-topup-amount');
-    const val = parseInt(input.value);
-    if(val > 0) {
-      currentUserBalance += val;
-      document.getElementById('user-balance').innerText = `${currentUserBalance.toLocaleString()} UZS`;
-      showToast(`Баланс пополнен на ${val.toLocaleString()} UZS`);
-      playSuccessSound();
-      input.value = '';
-    }
-  };
 
   renderMap();
 </script>
