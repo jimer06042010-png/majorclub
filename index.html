@@ -54,7 +54,7 @@
   }
 
   .poop-overlay {
-    position: fixed; top: 50%; left: 50%; z-index: 9999; font-size: 80px;
+    position: fixed; top: 50%; left: 50%; z-index: 99999; font-size: 80px;
     pointer-events: none; animation: flyPoopAnim 1.3s cubic-bezier(0.25, 1, 0.5, 1) forwards;
   }
 
@@ -95,7 +95,7 @@
     width: calc(100% - 20px); max-width: 420px;
     background: rgba(10, 12, 22, 0.95); backdrop-filter: blur(20px);
     border: 1px solid var(--border); border-radius: 18px; padding: 4px;
-    display: flex; justify-around; z-index: 40;
+    display: flex; justify-content: space-around; z-index: 40;
   }
   .tab-btn {
     flex: 1; padding: 6px 0; display: flex; flex-direction: column; align-items: center;
@@ -106,6 +106,11 @@
   .view { display: none; }
   .view.active { display: block; }
   
+  /* Фикс высочайшего z-index для всех модалок */
+  .modal-fixed-override {
+    z-index: 99999 !important;
+  }
+
   .no-scrollbar::-webkit-scrollbar { display: none; }
   .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 </style>
@@ -114,13 +119,13 @@
 
   <div id="poop-container"></div>
 
-  <div id="toast-notification" class="fixed top-3 left-1/2 -translate-x-1/2 z-50 bg-emerald-600 text-white px-4 py-2.5 rounded-2xl shadow-2xl flex items-center gap-2 text-xs font-bold transition-all duration-300 transform -translate-y-16 opacity-0 pointer-events-none w-[90%] max-w-xs justify-center border border-emerald-400/40">
+  <div id="toast-notification" class="fixed top-3 left-1/2 -translate-x-1/2 z-[999999] bg-emerald-600 text-white px-4 py-2.5 rounded-2xl shadow-2xl flex items-center gap-2 text-xs font-bold transition-all duration-300 transform -translate-y-16 opacity-0 pointer-events-none w-[90%] max-w-xs justify-center border border-emerald-400/40">
     <i id="toast-icon" data-lucide="check-circle-2" class="w-4 h-4"></i>
     <span id="toast-text">Уведомление</span>
   </div>
 
   <!-- USER LOGIN MODAL -->
-  <div id="login-modal" class="fixed inset-0 z-50 bg-[#060812] flex items-center justify-center p-4">
+  <div id="login-modal" class="fixed inset-0 modal-fixed-override bg-[#060812] flex items-center justify-center p-4">
     <div class="glass w-full max-w-sm p-6 space-y-4 border-indigo-500/30 relative bg-[#0d1021]">
       <button id="secret-admin-btn" class="absolute top-4 right-4 p-2 text-gray-500 hover:text-indigo-400 transition-colors">
         <i data-lucide="shield-lock" class="w-5 h-5"></i>
@@ -162,7 +167,7 @@
   </div>
 
   <!-- SECRET ADMIN AUTH MODAL -->
-  <div id="admin-auth-modal" class="fixed inset-0 z-50 bg-[#060812] flex items-center justify-center p-4 hidden">
+  <div id="admin-auth-modal" class="fixed inset-0 modal-fixed-override bg-[#060812] flex items-center justify-center p-4 hidden">
     <div class="glass w-full max-w-sm p-6 space-y-4 border-red-500/40 bg-[#140a10]">
       <div class="text-center space-y-1">
         <div class="w-12 h-12 rounded-2xl bg-red-500/20 border border-red-500/40 mx-auto flex items-center justify-center mb-2">
@@ -185,7 +190,7 @@
   </div>
 
   <!-- MODAL: MY BOOKINGS -->
-  <div id="bookings-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 hidden">
+  <div id="bookings-modal" class="fixed inset-0 modal-fixed-override bg-black/80 backdrop-blur-md flex items-center justify-center p-4 hidden">
     <div class="glass w-full max-w-sm p-4 space-y-3 border-indigo-500/40 bg-[#0b0e1b]">
       <div class="flex justify-between items-center border-b border-white/10 pb-2">
         <h3 class="font-title font-bold text-sm text-white flex items-center gap-2">
@@ -200,7 +205,7 @@
   </div>
 
   <!-- MODAL: HARDWARE SPECS & FPS -->
-  <div id="specs-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 hidden">
+  <div id="specs-modal" class="fixed inset-0 modal-fixed-override bg-black/80 backdrop-blur-md flex items-center justify-center p-4 hidden">
     <div class="glass w-full max-w-sm p-4 space-y-3 border-cyan-500/40 bg-[#070b19]">
       <div class="flex justify-between items-center border-b border-white/10 pb-2">
         <h3 class="font-title font-bold text-sm text-white flex items-center gap-2">
@@ -229,8 +234,42 @@
     </div>
   </div>
 
+  <!-- MODAL: ИГРОВЫЕ МИСИИИ / СКАНЕР И КАМЕРА -->
+  <div id="mission-modal" class="fixed inset-0 modal-fixed-override bg-black/85 backdrop-blur-md flex items-center justify-center p-4 hidden">
+    <div class="glass w-full max-w-sm p-4 space-y-3 border-amber-500/50 bg-[#120e06]">
+      <div class="flex justify-between items-center border-b border-white/10 pb-2">
+        <h3 class="font-title font-bold text-sm text-amber-300 flex items-center gap-1.5" id="modal-mission-title">
+          <i data-lucide="crosshair" class="w-4 h-4 text-amber-400"></i> Выполнение Миссии
+        </h3>
+        <button onclick="closeMissionModal()" class="text-gray-400 hover:text-white"><i data-lucide="x" class="w-4 h-4"></i></button>
+      </div>
+
+      <div class="space-y-2">
+        <p class="text-xs text-gray-300">Сделайте снимки экрана/монитора или загрузите готовый файл-доказательство:</p>
+        
+        <!-- Окно встроенной камеры -->
+        <video id="cameraVideo" autoplay playsinline class="w-full rounded-xl border border-amber-500/30 hidden max-h-40 object-cover"></video>
+        <button id="snapBtn" onclick="takePhoto()" class="w-full bg-amber-500 text-black font-bold py-1.5 rounded-xl text-xs hidden">📸 Сделать снимок</button>
+
+        <div class="flex gap-2">
+          <button onclick="startCamera()" class="flex-1 bg-white/10 hover:bg-white/20 border border-white/10 py-2 rounded-xl text-xs font-bold text-amber-300 flex items-center justify-center gap-1">
+            <i data-lucide="camera" class="w-3.5 h-3.5"></i> Камера
+          </button>
+          <label class="flex-1 bg-white/10 hover:bg-white/20 border border-white/10 py-2 rounded-xl text-xs font-bold text-cyan-300 flex items-center justify-center gap-1 cursor-pointer">
+            <i data-lucide="upload" class="w-3.5 h-3.5"></i> Файл
+            <input type="file" id="missionFileInput" accept="image/*,video/*" class="hidden">
+          </label>
+        </div>
+      </div>
+
+      <button onclick="submitMission()" class="w-full btn-primary py-2.5 rounded-xl font-bold text-white text-xs mt-2">
+        Отправить на проверку
+      </button>
+    </div>
+  </div>
+
   <!-- MODAL: ИНФОРМАЦИЯ О ЮЗЕРЕ ДЛЯ АДМИНА -->
-  <div id="admin-user-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+  <div id="admin-user-modal" class="fixed inset-0 modal-fixed-override bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
     <div class="glass p-4 w-full max-w-sm space-y-3 border-cyan-400/50 bg-[#0a0d1d]">
       <div class="flex justify-between items-start border-b border-white/10 pb-2">
         <div>
@@ -458,7 +497,7 @@
 
     </div>
 
-    <!-- ENHANCED BOOKING CARD (Всплывающий плавающий блок) -->
+    <!-- ENHANCED BOOKING CARD -->
     <div id="booking-card" class="glass p-3 hidden border-indigo-500/50 space-y-2.5">
       <div class="flex justify-between items-center border-b border-white/10 pb-2">
         <div>
@@ -504,7 +543,41 @@
         </div>
       </div>
 
-      <div class="space-y-2">
+      <!-- ИГРОВЫЕ МИСИИ (CS2) ВМЕСТО КОЛЕСА -->
+      <div class="space-y-2 border-t border-white/10 pt-3">
+        <p class="text-xs font-bold text-amber-400 flex items-center gap-1.5">
+          <i data-lucide="target" class="w-4 h-4"></i> Игровые Миссии CS2
+        </p>
+        <div class="grid grid-cols-2 gap-2 text-[11px]">
+          
+          <div class="bg-white/5 border border-white/10 p-2.5 rounded-xl space-y-1">
+            <p class="font-bold text-white">25 Киллов</p>
+            <p class="text-[9px] text-gray-400">Сделай 25 киллов за матч</p>
+            <button onclick="openMissionModal('25 Киллов')" class="w-full bg-amber-500/20 text-amber-300 border border-amber-500/30 py-1 rounded-lg font-bold hover:bg-amber-500/30 text-[10px]">Выполнить</button>
+          </div>
+
+          <div class="bg-white/5 border border-white/10 p-2.5 rounded-xl space-y-1">
+            <p class="font-bold text-white">Эйс (Ace)</p>
+            <p class="text-[9px] text-gray-400">Убей всю команду 1v5</p>
+            <button onclick="openMissionModal('Эйс')" class="w-full bg-amber-500/20 text-amber-300 border border-amber-500/30 py-1 rounded-lg font-bold hover:bg-amber-500/30 text-[10px]">Выполнить</button>
+          </div>
+
+          <div class="bg-white/5 border border-white/10 p-2.5 rounded-xl space-y-1">
+            <p class="font-bold text-white">Клатч 1v3</p>
+            <p class="text-[9px] text-gray-400">Выиграй раунд один</p>
+            <button onclick="openMissionModal('Клатч')" class="w-full bg-amber-500/20 text-amber-300 border border-amber-500/30 py-1 rounded-lg font-bold hover:bg-amber-500/30 text-[10px]">Выполнить</button>
+          </div>
+
+          <div class="bg-white/5 border border-white/10 p-2.5 rounded-xl space-y-1">
+            <p class="font-bold text-white">Нож</p>
+            <p class="text-[9px] text-gray-400">Убей с ножа</p>
+            <button onclick="openMissionModal('Нож')" class="w-full bg-amber-500/20 text-amber-300 border border-amber-500/30 py-1 rounded-lg font-bold hover:bg-amber-500/30 text-[10px]">Выполнить</button>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="space-y-2 border-t border-white/10 pt-3">
         <p class="text-xs font-semibold text-gray-400">Игровая статистика</p>
         <div class="grid grid-cols-2 gap-2">
           <div class="bg-white/5 border border-white/10 p-2.5 rounded-2xl">
@@ -533,7 +606,7 @@
           <i data-lucide="chevron-right" class="w-4 h-4 text-gray-500"></i>
         </button>
 
-        <button onclick="playClickSound(); alert('Меню Бара скоро появится в приложении! Закажите снеки у администратора.')" 
+        <button onclick="playClickSound(); alert('Закажите снеки напрямую у администратора.')" 
                 class="w-full glass p-2.5 flex justify-between items-center text-xs text-gray-200">
           <span class="flex items-center gap-2"><i data-lucide="utensils" class="w-4 h-4 text-amber-400"></i> Экспресс-заказ из Бара</span>
           <i data-lucide="chevron-right" class="w-4 h-4 text-gray-500"></i>
@@ -593,7 +666,7 @@
     </div>
   </div>
 
-  <!-- VIEW: ADMIN PANEL (ПОЛНАЯ УПРАВЛЯЮЩАЯ ПАНЕЛЬ С ЮЗЕРАМИ И ПК) -->
+  <!-- VIEW: ADMIN PANEL (С РАЗДЕЛОМ МИСИЙ И БОНУСОВ) -->
   <div id="view-admin" class="view space-y-3">
     <div class="glass p-4 space-y-3 border-red-500/30">
       <div class="flex justify-between items-center">
@@ -610,11 +683,21 @@
         </div>
         <div class="bg-white/5 p-2 rounded-xl">
           <p class="text-[9px] text-gray-400">Касса смены</p>
-          <p class="font-title text-xs font-bold text-emerald-400">1,240,000 UZ</p>
+          <p class="font-title text-xs font-bold text-emerald-400">1,240,000 UZS</p>
         </div>
         <div class="bg-white/5 p-2 rounded-xl">
           <p class="text-[9px] text-gray-400">Гости онлайн</p>
           <p class="font-title text-xs font-bold text-cyan-400" id="admin-users-count">3</p>
+        </div>
+      </div>
+
+      <!-- НОВЫЙ БЛОК: ЗАЯВКИ НА БОНУСЫ И МИССИИ -->
+      <div class="pt-2 border-t border-white/10 space-y-2">
+        <p class="text-xs text-amber-400 font-bold flex items-center gap-1">
+          <i data-lucide="gift" class="w-3.5 h-3.5"></i> Заявки на Бонусы и Миссии
+        </p>
+        <div id="admin-missions-list" class="space-y-2 max-h-48 overflow-y-auto pr-1">
+          <!-- Сюда дианмически рендерятся заявки -->
         </div>
       </div>
 
@@ -786,9 +869,15 @@
 
   const ADMIN_SECRET_CODE = '8888';
   let isAdmin = false;
+  let currentUserBalance = 150000;
   let myBookings = JSON.parse(localStorage.getItem('major_my_bookings') || '[]');
   let selectedDurationHours = 1;
   let selectedDurationPrice = 15000;
+
+  // Данные заявок на миссии
+  let pendingMissions = [];
+  let selectedMissionTitle = '';
+  let currentCameraStream = null;
 
   // База данных пользователей в Админке
   const mockUsersList = [
@@ -837,6 +926,120 @@
       toast.classList.remove('translate-y-0', 'opacity-100');
       toast.classList.add('-translate-y-16', 'opacity-0', 'pointer-events-none');
     }, 3500);
+  }
+
+  // --- ЛОГИКА МИСИЙ И КАМЕРЫ ---
+  function openMissionModal(title) {
+    playClickSound();
+    selectedMissionTitle = title;
+    document.getElementById('modal-mission-title').innerHTML = `<i data-lucide="crosshair" class="w-4 h-4 text-amber-400"></i> Миссия: ${title}`;
+    document.getElementById('mission-modal').classList.remove('hidden');
+    lucide.createIcons();
+  }
+
+  function closeMissionModal() {
+    playClickSound();
+    document.getElementById('mission-modal').classList.add('hidden');
+    stopCamera();
+  }
+
+  async function startCamera() {
+    playClickSound();
+    const video = document.getElementById('cameraVideo');
+    const snapBtn = document.getElementById('snapBtn');
+    try {
+      currentCameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+      video.srcObject = currentCameraStream;
+      video.classList.remove('hidden');
+      snapBtn.classList.remove('hidden');
+    } catch(err) {
+      showToast('Доступ к камере отклонен или недоступен', 'error');
+    }
+  }
+
+  function stopCamera() {
+    if (currentCameraStream) {
+      currentCameraStream.getTracks().forEach(track => track.stop());
+      currentCameraStream = null;
+    }
+    document.getElementById('cameraVideo').classList.add('hidden');
+    document.getElementById('snapBtn').classList.add('hidden');
+  }
+
+  function takePhoto() {
+    playClickSound();
+    showToast('Снимок экрана сделан!');
+    stopCamera();
+  }
+
+  function submitMission() {
+    playClickSound();
+    const fileInput = document.getElementById('missionFileInput');
+    const file = fileInput.files[0];
+    
+    const newReq = {
+      id: Date.now(),
+      userName: document.getElementById('user-display-name').innerText,
+      mission: selectedMissionTitle,
+      mediaUrl: file ? URL.createObjectURL(file) : 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=300&auto=format&fit=crop&q=80',
+      status: 'На проверке ⏳'
+    };
+
+    pendingMissions.unshift(newReq);
+    showToast('Ваша миссия выполнена! Бонусы поступят на ваш счет в течение 24 часов.');
+    closeMissionModal();
+    renderAdminMissionsList();
+    playSuccessSound();
+  }
+
+  function renderAdminMissionsList() {
+    const container = document.getElementById('admin-missions-list');
+    if (!container) return;
+
+    if (pendingMissions.length === 0) {
+      container.innerHTML = `<p class="text-xs text-gray-500 text-center py-2">Новых заявок на миссии пока нет</p>`;
+      return;
+    }
+
+    container.innerHTML = pendingMissions.map(m => `
+      <div class="bg-white/5 border border-white/10 p-2.5 rounded-xl space-y-2 text-xs">
+        <div class="flex justify-between items-center">
+          <span class="font-bold text-white">${m.userName}</span>
+          <span class="text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded font-bold">${m.status}</span>
+        </div>
+        <p class="text-[11px] text-gray-300">Миссия: <b class="text-amber-400">${m.mission}</b></p>
+        <img src="${m.mediaUrl}" class="w-full h-24 object-cover rounded-lg border border-white/10">
+        ${m.status === 'На проверке ⏳' ? `
+          <div class="flex gap-2 pt-1">
+            <button onclick="approveMission(${m.id})" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-1.5 rounded-lg text-[10px]">Принять (+10,000 UZS)</button>
+            <button onclick="rejectMission(${m.id})" class="flex-1 bg-red-600 hover:bg-red-500 text-white font-bold py-1.5 rounded-lg text-[10px]">Отклонить</button>
+          </div>
+        ` : ''}
+      </div>
+    `).join('');
+  }
+
+  function approveMission(reqId) {
+    playClickSound();
+    const req = pendingMissions.find(m => m.id === reqId);
+    if (req) {
+      req.status = 'Выполнено ✅';
+      currentUserBalance += 10000;
+      document.getElementById('user-balance').innerText = `${currentUserBalance.toLocaleString()} UZS`;
+      showToast(`Заявка одобрена! +10,000 UZS начислено.`);
+      renderAdminMissionsList();
+      playSuccessSound();
+    }
+  }
+
+  function rejectMission(reqId) {
+    playClickSound();
+    const req = pendingMissions.find(m => m.id === reqId);
+    if (req) {
+      req.status = 'Отклонено ❌';
+      showToast('Заявка на миссию отклонена', 'error');
+      renderAdminMissionsList();
+    }
   }
 
   const savedAvatar = localStorage.getItem('major_user_avatar');
@@ -1127,6 +1330,7 @@
     });
     document.getElementById('admin-busy-count').innerText = `${busyCount} / ${pcData.length}`;
     renderAdminUsersList();
+    renderAdminMissionsList();
   }
 
   function renderAdminUsersList() {
@@ -1256,7 +1460,8 @@
     const input = document.getElementById('admin-topup-amount');
     const val = parseInt(input.value);
     if(val > 0) {
-      document.getElementById('user-balance').innerText = `${val.toLocaleString()} UZS`;
+      currentUserBalance += val;
+      document.getElementById('user-balance').innerText = `${currentUserBalance.toLocaleString()} UZS`;
       showToast(`Баланс пополнен на ${val.toLocaleString()} UZS`);
       playSuccessSound();
       input.value = '';
