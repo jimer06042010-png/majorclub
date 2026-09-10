@@ -159,10 +159,10 @@
           </div>
         </div>
 
-        <!-- Поле с секретным 4-значным кодом Админа (6767) -->
+        <!-- Поле с секретным пин-кодом Админа -->
         <div class="pt-2 border-t border-white/10">
           <label class="text-xs text-amber-400 font-bold block mb-1 flex items-center gap-1">
-            <i data-lucide="shield-alert" class="w-3.5 h-3.5"></i> Пин-код Админа (только для Админа)
+            <i data-lucide="shield-alert" class="w-3.5 h-3.5"></i> Пин-код Админа (для сотрудников)
           </label>
           <input type="password" id="login-admin-code" placeholder="Введите 6767" maxlength="4" 
                  class="w-full bg-white/5 border border-amber-500/30 rounded-xl p-2.5 text-sm text-amber-300 font-mono tracking-widest focus:outline-none focus:border-amber-400">
@@ -446,7 +446,7 @@
       </div>
     </div>
 
-    <!-- BOOKING CARD -->
+    <!-- BOOKING CARD WITH CHECKS / PHOTOS -->
     <div id="booking-card" class="glass p-3.5 hidden border-indigo-500/50 space-y-3 relative z-30">
       <div class="flex justify-between items-center border-b border-white/10 pb-2">
         <div>
@@ -465,8 +465,25 @@
         </div>
       </div>
 
+      <!-- Выбор типа оплаты -->
+      <div>
+        <label class="text-[10px] text-gray-400 block mb-1.5 font-semibold">Способ оплаты:</label>
+        <select id="booking-payment-type" class="w-full bg-white/5 border border-white/10 rounded-xl p-2 text-xs text-white focus:outline-none">
+          <option value="card" class="bg-[#060812]">Перевод на карту (Загрузить чек)</option>
+          <option value="cash" class="bg-[#060812]">Наличные на рецепции</option>
+        </select>
+      </div>
+
+      <!-- Загрузка чека / фото оплаты -->
+      <div>
+        <label class="text-[10px] text-amber-400 font-bold block mb-1 flex items-center gap-1">
+          <i data-lucide="image" class="w-3.5 h-3.5"></i> Прикрепить фото чека или подтверждения:
+        </label>
+        <input type="file" id="booking-photo-input" accept="image/*" class="w-full text-xs text-gray-400 bg-white/5 border border-white/10 rounded-xl p-2 cursor-pointer">
+      </div>
+
       <button id="do-book-btn" class="w-full btn-primary py-3 rounded-xl text-xs font-bold text-white flex items-center justify-center gap-2 cursor-pointer shadow-lg">
-        <i data-lucide="check-circle" class="w-4 h-4"></i> Подтвердить и Забронировать
+        <i data-lucide="send" class="w-4 h-4"></i> Отправить заявку Администратору
       </button>
     </div>
 
@@ -530,7 +547,7 @@
     </div>
   </div>
 
-  <!-- VIEW 3: MISSIONS (С РАЗДЕЛОМ "В ПРОВЕРКЕ") -->
+  <!-- VIEW 3: MISSIONS -->
   <div id="view-missions" class="view space-y-3">
     <div class="glass p-4 space-y-3 border-amber-500/30">
       <div class="flex justify-between items-center border-b border-white/10 pb-2">
@@ -543,17 +560,14 @@
         <span class="text-[9px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full font-bold">CS2 & CLUB</span>
       </div>
 
-      <!-- РАЗДЕЛ "МИССИИ НА ПРОВЕРКЕ" У ЮЗЕРА -->
       <div id="user-pending-missions-section" class="space-y-2 pt-1 border-b border-white/10 pb-3">
         <p class="text-xs text-amber-300 font-bold flex items-center gap-1">
           <i data-lucide="clock" class="w-3.5 h-3.5"></i> Мои миссии в проверке
         </p>
         <div id="user-pending-list" class="space-y-2">
-          <!-- Загружается динамически -->
         </div>
       </div>
 
-      <!-- Доступные миссии -->
       <div class="space-y-2.5 pt-1" id="user-missions-container">
         <div class="bg-white/5 border border-white/10 p-3 rounded-2xl space-y-2 relative overflow-hidden">
           <div class="flex justify-between items-start">
@@ -578,23 +592,11 @@
           <p class="text-[11px] text-gray-400">Закажи 2 энергетика в баре клуба за один игровой сеанс</p>
           <button onclick="openMissionModal('Заправка Чемпиона')" class="w-full btn-amber py-2 rounded-xl text-black font-bold text-xs">Выполнить миссию</button>
         </div>
-
-        <div class="bg-white/5 border border-white/10 p-3 rounded-2xl space-y-2 relative overflow-hidden">
-          <div class="flex justify-between items-start">
-            <div>
-              <span class="text-[9px] bg-red-500/20 text-red-300 px-2 py-0.5 rounded-full font-bold">Hardcore</span>
-              <h4 class="font-title font-bold text-xs text-white mt-1">«Эйс в одиночку» (Ace 1v5)</h4>
-            </div>
-            <span class="text-xs font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-1 rounded-lg">+25,000 UZS</span>
-          </div>
-          <p class="text-[11px] text-gray-400">Убей всю вражескую команду 1v5 в официальном матче CS2</p>
-          <button onclick="openMissionModal('Эйс 1v5')" class="w-full btn-amber py-2 rounded-xl text-black font-bold text-xs">Выполнить миссию</button>
-        </div>
       </div>
     </div>
   </div>
 
-  <!-- VIEW 4: ADMIN / ПРОВЕРКА И СПИСОК ЮЗЕРОВ -->
+  <!-- VIEW 4: ADMIN / ПРОВЕРКА И СПИСОК ЮЗЕРОВ ИЗ BAZA -->
   <div id="view-admin" class="view space-y-3">
     <div class="glass p-4 space-y-3 border-red-500/40 bg-[#0d070b]">
       <div class="flex justify-between items-center">
@@ -604,23 +606,27 @@
         <span class="text-[9px] bg-red-500/20 text-red-300 px-2 py-0.5 rounded-full font-bold">ADMIN MODE</span>
       </div>
 
-      <!-- СПИСОК ЗАРЕГИСТРИРОВАННЫХ РЕАЛЬНЫХ ЮЗЕРОВ -->
+      <!-- СПИСОК ЗАРЕГИСТРИРОВАННЫХ КЛИЕНТОВ (ИЗ TELEGRAM BAZA / DB.JSON) -->
       <div class="pt-2 border-t border-white/10 space-y-2">
-        <p class="text-xs text-cyan-400 font-bold flex items-center gap-1.5">
-          <i data-lucide="users" class="w-4 h-4"></i> Зарегистрированные клиенты
-        </p>
+        <div class="flex justify-between items-center">
+          <p class="text-xs text-cyan-400 font-bold flex items-center gap-1.5">
+            <i data-lucide="users" class="w-4 h-4"></i> База клиентов (db.json)
+          </p>
+          <button onclick="loadAppUsers()" class="text-[10px] bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 px-2 py-1 rounded-lg flex items-center gap-1">
+            <i data-lucide="refresh-cw" class="w-3 h-3"></i> Обновить
+          </button>
+        </div>
         <div id="admin-users-list" class="space-y-1.5 max-h-36 overflow-y-auto pr-1">
-          <!-- Список заполнится из localStorage -->
+          <p class="text-[11px] text-gray-400">Нажмите "Обновить" для загрузки пользователей.</p>
         </div>
       </div>
 
       <!-- РАЗДЕЛ МИССИИ И ФОТО ОТ ЮЗЕРОВ -->
       <div class="pt-2 border-t border-white/10 space-y-2">
         <p class="text-xs text-amber-400 font-bold flex items-center gap-1.5">
-          <i data-lucide="check-square" class="w-4 h-4"></i> Входящие фото и миссии
+          <i data-lucide="check-square" class="w-4 h-4"></i> Входящие скриншоты миссий
         </p>
         <div id="admin-missions-list" class="space-y-2 max-h-52 overflow-y-auto pr-1">
-          <!-- Фотографии от пользователей отображаются здесь -->
         </div>
       </div>
 
@@ -663,7 +669,7 @@
     </div>
   </div>
 
-  <!-- BOTTOM NAVIGATION (4 КНОПКИ) -->
+  <!-- BOTTOM NAVIGATION -->
   <nav class="bottom-nav">
     <button class="nav-item active" data-tab="home">
       <i data-lucide="map" class="w-5 h-5"></i>
@@ -691,12 +697,10 @@
 
   const ADMIN_PIN_CODE = '6767';
   let isAdmin = false;
-  let currentUserBalance = 150000;
   let currentUploadedPhoto = '';
 
   let myBookings = JSON.parse(localStorage.getItem('major_my_bookings') || '[]');
   let pendingMissions = JSON.parse(localStorage.getItem('major_pending_missions') || '[]');
-  let registeredUsers = JSON.parse(localStorage.getItem('major_registered_users') || '[]');
 
   let selectedDurationHours = 1;
   let selectedDurationPrice = 15000;
@@ -765,7 +769,65 @@
     }, 3500);
   }
 
-  // ОБРАБОТКА ЗАГРУЗКИ ФОТОГРАФИИ МИССИИ
+  // --- ИНТЕГРАЦИЯ С СЕРВЕРОМ (SERVER.JS) ---
+
+  // 1. Отправка бронирования с фото администратору в Telegram
+  async function sendBookingToServer(bookingData) {
+    try {
+      showToast('Отправка заявки администратору...');
+      const response = await fetch('/api/send-request', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(bookingData)
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        playSuccessSound();
+        showToast('✅ Заявка с фото отправлена в Telegram админу!');
+        return true;
+      } else {
+        showToast('❌ ' + result.message, 'error');
+        return false;
+      }
+    } catch (err) {
+      console.error('Ошибка отправки на сервер:', err);
+      showToast('❌ Ошибка связи с сервером', 'error');
+      return false;
+    }
+  }
+
+  // 2. Подгрузка пользователей из базы данных сервера db.json
+  async function loadAppUsers() {
+    const container = document.getElementById('admin-users-list');
+    if (!container) return;
+
+    container.innerHTML = '<p class="text-xs text-gray-400">Загрузка пользователей...</p>';
+
+    try {
+      const res = await fetch('/api/users');
+      const data = await res.json();
+
+      if (data.success && data.users && data.users.length > 0) {
+        container.innerHTML = data.users.map(u => `
+          <div class="bg-white/5 border border-white/10 p-2 rounded-xl flex justify-between items-center text-xs">
+            <div>
+              <p class="font-bold text-white">${u.first_name || u.name || 'Игрок'}</p>
+              <p class="text-[10px] text-indigo-300">${u.username ? '@' + u.username : 'ID: ' + u.id}</p>
+            </div>
+            <span class="text-[9px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded font-bold">Из Telegram</span>
+          </div>
+        `).join('');
+      } else {
+        container.innerHTML = '<p class="text-xs text-gray-500 py-2">Пользователи в db.json пока не найдены</p>';
+      }
+    } catch (e) {
+      container.innerHTML = '<p class="text-xs text-red-400 py-2">Не удалось загрузить пользователей</p>';
+    }
+  }
+
+  // ОБРАБОТКА ФОТО ДЛЯ МИССИЙ
   function handleFileSelect(event) {
     const file = event.target.files[0];
     if (file) {
@@ -831,13 +893,13 @@
     document.getElementById('photo-preview').src = currentUploadedPhoto;
     document.getElementById('photo-preview-container').classList.remove('hidden');
     stopCamera();
-    showToast('Снимок экрана зафиксирован!');
+    showToast('Снимок зафиксирован!');
   }
 
   function submitMission() {
     playClickSound();
     if (!currentUploadedPhoto) {
-      showToast('Пожалуйста, сделайте фото или выберите файл!', 'error');
+      showToast('Сделайте фото или выберите файл!', 'error');
       return;
     }
     
@@ -852,14 +914,13 @@
     pendingMissions.unshift(newReq);
     localStorage.setItem('major_pending_missions', JSON.stringify(pendingMissions));
 
-    showToast('Бонусы поступят в течение 24 часов после проверки!');
+    showToast('Отправлено! Бонусы поступят после проверки.');
     closeMissionModal();
     renderUserPendingMissions();
     renderAdminMissionsList();
     playSuccessSound();
   }
 
-  // РЕНДЕР МИССИЙ "В ПРОВЕРКЕ" ДЛЯ ЮЗЕРА
   function renderUserPendingMissions() {
     const container = document.getElementById('user-pending-list');
     if (!container) return;
@@ -885,7 +946,6 @@
     `).join('');
   }
 
-  // РЕНДЕР МИССИИ И ФОТО У АДМИНА
   function renderAdminMissionsList() {
     const container = document.getElementById('admin-missions-list');
     if (!container) return;
@@ -907,7 +967,7 @@
         <img src="${m.mediaUrl}" class="w-full h-32 object-cover rounded-lg border border-white/10">
         ${m.status === 'pending' ? `
           <div class="flex gap-2 pt-1">
-            <button onclick="approveMission(${m.id})" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-1.5 rounded-lg text-[10px]">Одобрить (+Бонус)</button>
+            <button onclick="approveMission(${m.id})" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-1.5 rounded-lg text-[10px]">Одобрить</button>
             <button onclick="rejectMission(${m.id})" class="flex-1 bg-red-600 hover:bg-red-500 text-white font-bold py-1.5 rounded-lg text-[10px]">Отклонить</button>
           </div>
         ` : ''}
@@ -921,7 +981,7 @@
     if (req) {
       req.status = 'approved';
       localStorage.setItem('major_pending_missions', JSON.stringify(pendingMissions));
-      showToast(`Одобрено! Награда выслана пользователю.`);
+      showToast(`Одобрено!`);
       renderAdminMissionsList();
       renderUserPendingMissions();
       playSuccessSound();
@@ -940,28 +1000,6 @@
     }
   }
 
-  // СПИСОК КЛИЕНТОВ ДЛЯ АДМИНА
-  function renderAdminUsersList() {
-    const container = document.getElementById('admin-users-list');
-    if (!container) return;
-
-    if (registeredUsers.length === 0) {
-      container.innerHTML = `<p class="text-xs text-gray-500 text-center py-2">Нет зарегистрированных пользователей</p>`;
-      return;
-    }
-
-    container.innerHTML = registeredUsers.map(u => `
-      <div class="bg-white/5 border border-white/10 p-2 rounded-xl flex justify-between items-center text-xs">
-        <div>
-          <p class="font-bold text-white">${u.nick}</p>
-          <p class="text-[10px] text-indigo-300">${u.phone}</p>
-        </div>
-        <span class="text-[9px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded font-bold">Игрок</span>
-      </div>
-    `).join('');
-  }
-
-  // АВТОРИЗАЦИЯ И СОХРАНЕНИЕ
   function applyUserData(nick, phone, adminStatus = false) {
     document.getElementById('user-display-name').innerText = nick;
     document.getElementById('profile-nick-display').innerText = nick;
@@ -977,6 +1015,7 @@
       document.getElementById('dynamic-tab-label').innerText = 'Проверка';
       document.getElementById('dynamic-tab-icon').setAttribute('data-lucide', 'shield-check');
       if (missionsTabBtn) missionsTabBtn.style.display = 'none';
+      loadAppUsers();
     } else {
       dynamicTab.setAttribute('data-tab', 'help');
       document.getElementById('dynamic-tab-label').innerText = 'Помощь';
@@ -985,11 +1024,9 @@
     }
     lucide.createIcons();
     renderUserPendingMissions();
-    renderAdminUsersList();
     renderAdminMissionsList();
   }
 
-  // ПРОВЕРКА СОХРАНЕННОЙ СЕССИИ (ЧТОБЫ НЕ СПРАШИВАТЬ РЕГИСТРАЦИЮ СНОВА)
   const savedUser = JSON.parse(localStorage.getItem('major_active_user'));
   if (savedUser) {
     applyUserData(savedUser.nick, savedUser.phone, savedUser.isAdmin);
@@ -1013,13 +1050,6 @@
       showToast('Успешный вход в режим Администратора!');
     } else {
       userSession = { nick: fullNick, phone: fullPhone, isAdmin: false };
-      
-      // Добавляем реального юзера в глобальную базу админа
-      if (!registeredUsers.some(u => u.nick === fullNick)) {
-        registeredUsers.unshift({ nick: fullNick, phone: fullPhone });
-        localStorage.setItem('major_registered_users', JSON.stringify(registeredUsers));
-      }
-
       applyUserData(fullNick, fullPhone, false);
       showToast('Добро пожаловать в Major Club!');
     }
@@ -1148,23 +1178,54 @@
     }
   }
 
-  document.getElementById('do-book-btn').onclick = () => {
-    if (selectedPc) {
-      selectedPc.status = 'busy';
-      myBookings.unshift({
-        label: selectedPc.label,
-        zone: selectedPc.zone,
-        hours: selectedDurationHours,
-        time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
-      });
-      localStorage.setItem('major_my_bookings', JSON.stringify(myBookings));
+  // НАЖАТИЕ "ОТПРАВИТЬ ЗАЯВКУ АДМИНИСТРАТОРУ"
+  document.getElementById('do-book-btn').onclick = async () => {
+    if (!selectedPc) return;
 
-      renderMap();
-      playSuccessSound();
-      showToast(`Успешно забронирован ${selectedPc.label} на ${selectedDurationHours}ч!`);
-      document.getElementById('booking-card').classList.add('hidden');
-      selectedPc = null;
+    const fileInput = document.getElementById('booking-photo-input');
+    const paymentType = document.getElementById('booking-payment-type').value;
+
+    if (!fileInput.files || fileInput.files.length === 0) {
+      showToast('⚠️ Пожалуйста, загрузите фото чека или оплаты!', 'error');
+      return;
     }
+
+    const file = fileInput.files[0];
+    const reader = new FileReader();
+
+    reader.onload = async function(e) {
+      const photoBase64 = e.target.result;
+      const currentNick = document.getElementById('user-display-name').innerText.replace('@', '');
+
+      const bookingPayload = {
+        username: currentNick,
+        pcNumber: selectedPc.id,
+        hours: selectedDurationHours,
+        price: selectedDurationPrice,
+        paymentType: paymentType,
+        photo: photoBase64
+      };
+
+      const success = await sendBookingToServer(bookingPayload);
+
+      if (success) {
+        selectedPc.status = 'busy';
+        myBookings.unshift({
+          label: selectedPc.label,
+          zone: selectedPc.zone,
+          hours: selectedDurationHours,
+          time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+        });
+        localStorage.setItem('major_my_bookings', JSON.stringify(myBookings));
+
+        renderMap();
+        document.getElementById('booking-card').classList.add('hidden');
+        fileInput.value = '';
+        selectedPc = null;
+      }
+    };
+
+    reader.readAsDataURL(file);
   };
 
   function renderAdminPanel() {
